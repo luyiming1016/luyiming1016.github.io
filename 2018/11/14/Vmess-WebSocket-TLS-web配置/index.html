@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/3232.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/3232.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/1616.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="梯子,Vmess,TLS,Apache," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文主要根据作者实践，分享一下目前较为安全稳定的Vmess+TLS+Web上网方式的配置方法，用以替代已经可被the Wall较为准确识别的ssr，ss。  Vmess+ws+web详细教程可参考一键脚本配置V2ray梯子详细教程 前言前段时间ssr也变得不稳定了，平均一个ip用不到一周就会被blocked，经过和朋友的学习与讨论，发现Vmess+TLS+Web算是现今较为稳定的上网方式，简单配">
+<meta property="og:type" content="article">
+<meta property="og:title" content="科学上网需求与目前稳定方式的介绍">
+<meta property="og:url" content="http://luyiminggonnabeok.cn/2018/11/14/Vmess-WebSocket-TLS-web%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="酉荻的博客">
+<meta property="og:description" content="本文主要根据作者实践，分享一下目前较为安全稳定的Vmess+TLS+Web上网方式的配置方法，用以替代已经可被the Wall较为准确识别的ssr，ss。  Vmess+ws+web详细教程可参考一键脚本配置V2ray梯子详细教程 前言前段时间ssr也变得不稳定了，平均一个ip用不到一周就会被blocked，经过和朋友的学习与讨论，发现Vmess+TLS+Web算是现今较为稳定的上网方式，简单配">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-31.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-33.png">
+<meta property="article:published_time" content="2018-11-14T09:36:00.000Z">
+<meta property="article:modified_time" content="2020-05-04T11:36:49.003Z">
+<meta property="article:author" content="酉荻">
+<meta property="article:tag" content="梯子">
+<meta property="article:tag" content="Vmess">
+<meta property="article:tag" content="TLS">
+<meta property="article:tag" content="Apache">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://luyiminggonnabeok.cn/images/pasted-31.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '1R70HHMBOU',
+      apiKey: '5c8731abbbc0c8e76f1248d7e0ab3967',
+      indexName: 'udyblog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"博客里搜一下吧","hits_empty":"不好意思没找到${query}","hits_stats":"找到${hits}篇符合的文章，用时${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luyiminggonnabeok.cn/2018/11/14/Vmess-WebSocket-TLS-web配置/"/>
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/b40c9eb3.js","daovoice")
+  daovoice('init', {
+      app_id: "b40c9eb3"
+    });
+  daovoice('update');
+  </script>
+
+
+  <title>科学上网需求与目前稳定方式的介绍 | 酉荻的博客</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="酉荻的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">酉荻的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脱离高级趣味</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于我">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luyiminggonnabeok.cn/2018/11/14/Vmess-WebSocket-TLS-web%E9%85%8D%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="酉荻">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/touxiang.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="酉荻的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">科学上网需求与目前稳定方式的介绍</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-14T17:36:00+08:00">
+                2018-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/11/14/Vmess-WebSocket-TLS-web%E9%85%8D%E7%BD%AE/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/11/14/Vmess-WebSocket-TLS-web%E9%85%8D%E7%BD%AE/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本文主要根据作者实践，分享一下目前较为安全稳定的Vmess+TLS+Web上网方式的配置方法，用以替代已经可被the Wall较为准确识别的ssr，ss。</p>
+</blockquote>
+<p><strong>Vmess+ws+web详细教程可参考<a href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">一键脚本配置V2ray梯子详细教程</a></strong></p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前段时间ssr也变得不稳定了，平均一个ip用不到一周就会被blocked，经过和朋友的学习与讨论，发现Vmess+TLS+Web算是现今较为稳定的上网方式，简单配置后得以成功，经过一周多的测试，此方法现在来看比较稳定。</p>
+<h1 id="科学上网三大需求"><a href="#科学上网三大需求" class="headerlink" title="科学上网三大需求"></a>科学上网三大需求</h1><p>在进行具体配置讲解之前，首先探讨一下我们的需求，我们为什么要科学上网？很显然，每个人的需求都是不同的，这就使得我们需要不同的解决方案来应对。大体上我们的需求有以下三种：</p>
+<ul>
+<li>开放网络连接，使得 A 和 B 可以间接地进行正常通信；（速度）</li>
+<li>通信内容，双方身份不能被第三方知晓；（安全）</li>
+<li>网络连接要稳定，不能间歇或永久地失效；（稳定）</li>
+</ul>
+<p>这三个需求在不同的人那里都有不同的优先级，比如对于速度的要求，如果是ISP的限制我们可以添加流量混淆来迷惑它，对于安全性要求高，我们可以使用安全的vpn或TOR这种P2P匿名网络（上过暗网的小伙伴肯定对它不陌生），但其缺点也是显著的，现在wall已经能够很容易的识别各种vpn协议和tor协议了，加之tor因为用了多级代理，速度实在是慢，显然专门是为了匿名设计的。</p>
+<p>这篇文章主要针对的是第三个需求，就是稳定（利用TLS可以实现内容安全，但通信双方身份还是不能很好保密），用这种方法配置，协议基本不会被检测出来，因为我们实现的是完美的真实的https通信，不是伪装的https，不排除未来会有更先进智能的流量检测方式出现，识别出此种办法，但如今来看还是很稳的。当然因为加了web后相当于多了一层代理，速度还是不如直接用ss/ssr。但已经有文章指出通过随机森林算法检测ss的流量，可达到85%的检测精度，而且退一步想，wall或许根本不需要识别协议，一个用着奇怪tcp协议的大流量服务器ip，却完全没有http/https流量，本身就很值得怀疑了。</p>
+<h1 id="SS协议与用Vmess-https的代理逻辑对比"><a href="#SS协议与用Vmess-https的代理逻辑对比" class="headerlink" title="SS协议与用Vmess+https的代理逻辑对比"></a>SS协议与用Vmess+https的代理逻辑对比</h1><p><img src="/images/pasted-31.png" alt="upload successful"></p>
+<p><img src="/images/pasted-33.png" alt="upload successful"></p>
+<p>可以看到，其实我们实现的就是在中间添加了一个反向代理，把后端的v2ray（用Vmess协议的软件）服务器端隐藏了起来，前端变成了真实的TLS流量（当然需要我们自己申请域名证书），前端可以是Apache或者Nginx，而WebSocket的功能就是提供了一个全双工的通道，让Web服务器和v2ray可以自由通信。</p>
+<p>TLS的特性决定了这样的通信，内容是绝对不会被破解，除非私钥泄密，外人在怎么看，也只能看出来你在用浏览器上网，不可能解密到你的实际通信内容，也就不会知道你实际在翻墙。</p>
+<h1 id="实现主要步骤"><a href="#实现主要步骤" class="headerlink" title="实现主要步骤"></a>实现主要步骤</h1><ol>
+<li>购买域名</li>
+<li>租用vps</li>
+<li>域名解析到vps</li>
+<li>配置证书</li>
+<li>配置v2ray服务端</li>
+<li>配置Apache/Nginx，设置代理</li>
+<li>配置客户端</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://www.v2ray.com/ui_client/ios.html#kitsunebi" target="_blank" rel="noopener">V2Ray 用户手册</a></li>
+<li><a href="https://toutyrater.github.io/" target="_blank" rel="noopener">V2Ray 配置教程</a></li>
+<li><a href="https://steemit.com/cn/@v2ray/47wumq" target="_blank" rel="noopener">适合自己的才是最好的</a></li>
+<li><a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">VPS租用，设置（可以看前半段，ssr建议就不要用了）</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%A2%AF%E5%AD%90/" rel="tag"># 梯子</a>
+          
+            <a href="/tags/Vmess/" rel="tag"># Vmess</a>
+          
+            <a href="/tags/TLS/" rel="tag"># TLS</a>
+          
+            <a href="/tags/Apache/" rel="tag"># Apache</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/25/%E8%B0%83%E5%88%B6%E8%A7%A3%E8%B0%83%E5%99%A8%E5%8E%9F%E7%90%86-E1/" rel="next" title="调制解调器原理E1">
+                <i class="fa fa-chevron-left"></i> 调制解调器原理E1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/10/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" rel="prev" title="通信基础概念学习笔记（一）">
+                通信基础概念学习笔记（一） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/touxiang.gif"
+                alt="酉荻" />
+            
+              <p class="site-author-name" itemprop="name">酉荻</p>
+              <p class="site-description motion-element" itemprop="description">Always.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:luyiming1016@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#科学上网三大需求"><span class="nav-number">2.</span> <span class="nav-text">科学上网三大需求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SS协议与用Vmess-https的代理逻辑对比"><span class="nav-number">3.</span> <span class="nav-text">SS协议与用Vmess+https的代理逻辑对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现主要步骤"><span class="nav-number">4.</span> <span class="nav-text">实现主要步骤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">酉荻</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: true,
+        appId: 'SfTyUdnrc6u7vQckktfMf2Wp-gzGzoHsz',
+        appKey: 'tBk0IQRdr9kGFInR4qoDRw9O',
+        placeholder: '欢迎评论',
+        avatar:'robohash',
+        guest_info:guest,
+        pageSize:'10' || 10,
+	avatar_cdn:'https://www.gravatar.com/avatar/',
+    });
+  </script>
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.4"></script>
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

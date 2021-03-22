@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/3232.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/3232.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/1616.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="梯子,ssr,科学上网,一键脚本," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="SSR这一年来已经不太稳定(但其实不嫌麻烦server挂了自己换ip也没什么大不了)，建议使用v2ray或者Trojan，请参考这几篇文章: Vless+ws+tls科学上网梯子一键脚本教程 Naive+ws+tls科学上网梯子搭建一键脚本教程 一键脚本配置V2ray(Vmess)科学上网梯子详细教程, 一键脚本搭建Trojan梯子详细教程 Vless+ws+tls一键脚本教程  声明一下，题目写">
+<meta property="og:type" content="article">
+<meta property="og:title" content="十分钟搭建自己的科学上网SSR梯子（自建VPN）">
+<meta property="og:url" content="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/index.html">
+<meta property="og:site_name" content="酉荻的博客">
+<meta property="og:description" content="SSR这一年来已经不太稳定(但其实不嫌麻烦server挂了自己换ip也没什么大不了)，建议使用v2ray或者Trojan，请参考这几篇文章: Vless+ws+tls科学上网梯子一键脚本教程 Naive+ws+tls科学上网梯子搭建一键脚本教程 一键脚本配置V2ray(Vmess)科学上网梯子详细教程, 一键脚本搭建Trojan梯子详细教程 Vless+ws+tls一键脚本教程  声明一下，题目写">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-41.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-42.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-43.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-44.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-45.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-20.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-21.png">
+<meta property="article:published_time" content="2018-08-10T13:13:00.000Z">
+<meta property="article:modified_time" content="2020-11-21T15:14:02.836Z">
+<meta property="article:author" content="酉荻">
+<meta property="article:tag" content="梯子">
+<meta property="article:tag" content="ssr">
+<meta property="article:tag" content="科学上网">
+<meta property="article:tag" content="一键脚本">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://luyiminggonnabeok.cn/images/pasted-41.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '1R70HHMBOU',
+      apiKey: '5c8731abbbc0c8e76f1248d7e0ab3967',
+      indexName: 'udyblog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"博客里搜一下吧","hits_empty":"不好意思没找到${query}","hits_stats":"找到${hits}篇符合的文章，用时${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luyiminggonnabeok.cn/2018/08/10/十分钟搭建自己的SSR科学上网梯子/"/>
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/b40c9eb3.js","daovoice")
+  daovoice('init', {
+      app_id: "b40c9eb3"
+    });
+  daovoice('update');
+  </script>
+
+
+  <title>十分钟搭建自己的科学上网SSR梯子（自建VPN） | 酉荻的博客</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="酉荻的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">酉荻的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脱离高级趣味</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于我">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="酉荻">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/touxiang.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="酉荻的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">十分钟搭建自己的科学上网SSR梯子（自建VPN）</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-10T21:13:00+08:00">
+                2018-08-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B/" itemprop="url" rel="index">
+                    <span itemprop="name">教程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>SSR这一年来已经不太稳定(但其实不嫌麻烦server挂了自己换ip也没什么大不了)，建议使用v2ray或者Trojan，请参考这几篇文章:</strong></p>
+<p><a href="http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Vless+ws+tls科学上网梯子一键脚本教程</a></p>
+<p><a href="http://luyiminggonnabeok.cn/2020/10/13/Naive-ws-tls%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Naive+ws+tls科学上网梯子搭建一键脚本教程</a></p>
+<p><a href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">一键脚本配置V2ray(Vmess)科学上网梯子详细教程</a>,</p>
+<p><a href="http://luyiminggonnabeok.cn/2019/12/07/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%90%AD%E5%BB%BATrojan%E6%A2%AF%E5%AD%90%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">一键脚本搭建Trojan梯子详细教程</a></p>
+<p><a href="http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Vless+ws+tls一键脚本教程</a></p>
+<blockquote>
+<p>声明一下，题目写了自建VPN只是为了引流，毕竟现在大家一提科学上网还说vpn，但其实这些科学上网协议和vpn差别很大，可以说根本不是一回事，希望大家不要被我误导，想了解具体区别可以google或者学习一下TCP/IP知识。本文利用linux vps+ShadowsocksR(ssrmu.sh脚本)快速搭建自己的梯子服务器，方便快捷，不怕封ip，小白向。</p>
+</blockquote>
+<hr>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>前段时间环境不好，很多梯子都被封了，基本找不到好用的，找到了也是提心吊胆估摸着没多久也会不能用，最近学web，接触了一些vps的东西，也在朋友的点拨下了解了ssrmu.sh这个操作异常简单的脚本，从此打开了自建梯子的新世界的大门。<br>总的来说搭建过程分为以下几步。  </p>
+<p>1.租借VPS<br>2.安装ssh远程登陆客户端<br>3.通过ssrmu.sh脚本安装ShadowsocksR。<br>4.安装SSR客户端，科学上网。  </p>
+<p>熟练了整个过程不要十分钟。下面就步骤讲一讲。</p>
+<hr>
+<h2 id="租借vps"><a href="#租借vps" class="headerlink" title="租借vps"></a>租借vps</h2><h3 id="vps简要原理"><a href="#vps简要原理" class="headerlink" title="vps简要原理"></a>vps简要原理</h3><p>   虽然这是无脑教程，但是我们还是简单了解一下一些基本概念比较好，比如vps是什么。  </p>
+<blockquote>
+<p>VPS（Virtual Private Server 虚拟专用服务器）技术，将一台服务器分割成多个虚拟专享服务器的优质服务。实现VPS的技术分为容器 [1]  技术，和虚拟化技术 [2]  。在容器或虚拟机中，每个VPS都可分配独立公网IP地址、独立操作系统、实现不同VPS间磁盘空间、内存、CPU资源、进程和系统配置的隔离，为用户和应用程序模拟出“独占”使用计算资源的体验。VPS可以像独立服务器一样，重装操作系统，安装程序，单独重启服务器。VPS为使用者提供了管理配置的自由，可用于企业虚拟化，也可以用于IDC资源租用。<br>——————百度百科</p>
+</blockquote>
+<p>简单说，可以vps就是你自己的一台服务器，你可以随时远程登陆(手机都可以，很方便)，在上面部署任何服务，比如建个网站博客之类的，做个邮件服务器，或者就是当个ftp服务器，做个云盘等等，这就不细说了，但是同样你也可以用它搭建梯子，让它成为你自己独享的一台<strong>代理服务器</strong>。当这个服务器ip在国外的时候，不受墙的限制，你利用这个服务器的梯子科学上网的时候，相当于是用它代理，比如你要看油管的视频，其实是它代替你上油管，视频先加载在你的代理服务器上，服务器在转给你，因为墙也不是所有国外ip都封锁，基本上你新申请的vps是不会被墙的，所以你和你自己的vps之间的链接是正常的（当然之后用的时间越久流量越大，被封的概率也很高，不过不要担心，这时候我们换个ip就好啦）。这样，就实现了<strong>科学上网</strong>的功能。  </p>
+<p>好了讲完原理，看看怎么操作，第一步租个vps，vps当然不是免费的，你也可以把它理解为一台在国外，你可以用它远程上网的，永远不关机的电脑。（所以你要是想不花钱的话，可以直接找你在国外上学的同学，用他的电脑搭梯子，也是可行的)</p>
+<h3 id="vps租借"><a href="#vps租借" class="headerlink" title="vps租借"></a>vps租借</h3><p>虽然是一键脚本，但是使用脚本的前提还是你有个vps，和一个解析到vps的域名，首先来讲一下购买vps，现在可以购买vps的云平台很多，之前用的digitalocean,最主要的原因是因为可以随时删除重建服务器，等于可以随时更换被墙的ip。后来用<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">Vultr</a>了，因为发现除了和DO一样可以随时换ip，重点是还有日本的节点，而且支持支付宝，大陆使用日本的节点可以说速度飞快了。</p>
+<p>首先注册vultr账号，这是我的推广链接，大家可以用这个：<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr注册</a></p>
+<p>注册好第一次进去会提示让你完善信息，首次最少充值10刀，<br>之后进入控制台界面，点击products，然后点右上角的加号添加server</p>
+<p><img src="/images/pasted-41.png" alt="upload successful"></p>
+<p>如图配置，server选哪里的都可以，但是强烈建议选日本（最近上线了韩国的，也挺好用的），真的比其他地方的快好多<strong>注意系统选without SElinux版本的，不然可能会有问题</strong>。。</p>
+<p><img src="/images/pasted-42.png" alt="upload successful"></p>
+<p>这里要注意了，默认系统是Centos8(Centos都出8了。。今天第一次发现), 脚本是Centos7环境下的，所以这里一定要选Centos7，之后配置选5刀的就可以，科学上网足够用了。</p>
+<p><img src="/images/pasted-43.png" alt="upload successful"></p>
+<p>选好了就可以deploy now了，之后会自动跳转到products节目，这时候你的server是installing的状态，等大概一分钟，就会running。</p>
+<p>之后点右边的三个点（server刚起来也可能是叫manage，反正就是最右边的）进入server detail。（如果之后哪天ip真的被封了，也可以在这里点destroy然后重新建一个）</p>
+<p><img src="/images/pasted-44.png" alt="upload successful"></p>
+<p>这里是你的server的一些详细信息，<strong>记住你的ip address和password</strong>，密码需要点那个小眼睛才能看到。（大家可以看见这里月流量是1000G，我这个4个人用了大半个月也就用了100多G，所以5刀的流量足够了）</p>
+<p><img src="/images/pasted-45.png" alt="upload successful"></p>
+<p>到这里vps就做好了，进入下一步。</p>
+<h2 id="ssh客户端安装"><a href="#ssh客户端安装" class="headerlink" title="ssh客户端安装"></a>ssh客户端安装</h2><p>ssh客户端就是我们本地连接服务器的工具，windows下ssh客户端主要有Putty和xshell，我一般用putty，直接百度下载就好，用法都差不多，下载好Putty<br>以后，打开出现下面的画面</p>
+<p><img src="/images/pasted-20.png" alt="upload successful"></p>
+<p>hostname填刚才邮件的ip，点open，会出现login的登陆画面，填root，之后会要求出入密码，直接复制粘贴邮件里的密码就好，putty里粘贴直接在光标后面点鼠标右键就好，第一次登陆会要求改密码，按照提示改就好。<br>之后就要安装ssrmu脚本了</p>
+<h2 id="通过ssrmu-sh脚本安装ShadowsocksR"><a href="#通过ssrmu-sh脚本安装ShadowsocksR" class="headerlink" title="通过ssrmu.sh脚本安装ShadowsocksR"></a>通过ssrmu.sh脚本安装ShadowsocksR</h2><p>先明确一点，我们是要安装shadowsocksr这个软件，ssrmu是一个便捷的安装配置ShadowsocksR的脚本。总之，通过上一步登录到我们的vps后我们直接复制黏贴下面的命令</p>
+<pre><code>wget -N --no-check-certificate https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/ssrmu.sh &amp;&amp; chmod +x ssrmu.sh &amp;&amp; bash ssrmu.sh</code></pre><p>如果提示</p>
+<pre><code>bash: wget: command not found</code></pre><p>的话，就先执行下面的再执行第一步的命令</p>
+<pre><code>yum -y install wget</code></pre><p>然后就进入了ssrmu.sh脚本了，脚本有很多功能，<del>小白的我们就一路回车就好了</del> <strong>注意这里，其他可以一路回车，选端口强烈建议换一个端口，建议将默认的2333换为<del>10000</del>65535间的<del>10000</del>11000之间的一个随机端口，最近2333端口被封的厉害</strong></p>
+<p>最后会出现配置完成的画面，复制好提示出现的ssr链接复制保存在剪贴板里，之后就要安装ssr客户端了。</p>
+<h2 id="安装BBR加速"><a href="#安装BBR加速" class="headerlink" title="安装BBR加速"></a>安装BBR加速</h2><p>BBR是google研发的一种拥塞控制算法，可以显著地提高服务器吞吐量和减少TCP链接的延迟，简单说就是可以加速，因为之前定位是小白教程，所以这段就没写（其实是懒，而且后来脑补出我已经写过bbr这部分的幻觉），后来好多小伙伴说速度太慢了，脚本里其实有BBR的功能，选项14其他功能里就有，但是Centos安装不了，得用ubuntu，所以想用脚本里自带的BBR的小伙伴选服务器请换成ubuntu。。但其实原装的BBR不是特别好用，下面提供一个Centos7下魔改BBR的脚本。</p>
+<p>SSR安装完成后，命令行输入以下命令：</p>
+<pre><code>cd /usr/src &amp;&amp; wget -N --no-check-certificate &quot;https://raw.githubusercontent.com/chiakge/Linux-NetSpeed/master/tcp.sh&quot; &amp;&amp; chmod +x tcp.sh &amp;&amp; ./tcp.sh</code></pre><p>在弹出的界面选1，安装内核，安装完之后vps会重启，putty会断开连接，重启等待1到2分钟，在重复刚才的步骤用putty登陆vps，输入以下代码，在弹出的界面输入5，使用BBR。</p>
+<pre><code>cd /usr/src &amp;&amp; ./tcp.sh</code></pre><p>之后显示BBR启动成功，这样我们服务端架设的步骤就完全完成了。</p>
+<h2 id="安装SSR客户端，科学上网"><a href="#安装SSR客户端，科学上网" class="headerlink" title="安装SSR客户端，科学上网"></a>安装SSR客户端，科学上网</h2><p>windows下的ssr客户端数不胜数，百度一个下载就好，一般下载下来是这样的图标，<br><img src="/images/pasted-21.png" alt="upload successful"></p>
+<p>（两年后的更新。。我还是放的链接吧）</p>
+<h3 id="SSR-for-Win"><a href="#SSR-for-Win" class="headerlink" title="SSR for Win"></a>SSR for Win</h3><pre><code>链接：https://pan.baidu.com/s/1Jw93QbxJNOSns8Ds3dnYaQ 
+提取码：6cri</code></pre><p>打开以后，在桌面右下角任务栏出现，点右键，点从粘贴板导入，然后就是见证奇迹的时刻，我们成功了。</p>
+<p>安卓端的ssr工具也很多，自行下载安装包安装就好，用法都差不多，ios下，国内市场的ssr客户端都下架了，需要去美区App Store下载，美区账号在淘宝买就好，一般一两块钱一个，ios端推荐Shadowrocket，不过要花钱买，几块钱，用我们之前注册的PayPal就好，也有个免费的Patatso Lite。用法都差不多，从剪贴板导入ssr地址就好。</p>
+<h3 id="SSR-for-Android"><a href="#SSR-for-Android" class="headerlink" title="SSR for Android"></a>SSR for Android</h3><pre><code>链接：https://pan.baidu.com/s/10Jv7Q6kAFgRgQ_tZKzh7ow 
+提取码：vgs1 </code></pre><p>用法参考上面</p>
+<h3 id="SSR-for-Mac"><a href="#SSR-for-Mac" class="headerlink" title="SSR for Mac"></a>SSR for Mac</h3><pre><code>链接：https://pan.baidu.com/s/11dpLTWuJmnKI-IfK4Ku0Dg 
+提取码：dp2z </code></pre><p>用法参考上面</p>
+<h2 id="ps-ip被封了怎么办？"><a href="#ps-ip被封了怎么办？" class="headerlink" title="ps. ip被封了怎么办？"></a>ps. ip被封了怎么办？</h2><p>大多情况下不是ip被封了，只是端口被封了，这时候换个端口重新建服务还可以用段时间，再次被封的时候大概就事ip被封了，得重新换server了。</p>
+<p>很简单，去到Digitalocean的控制台里，在我们创建的droplet最右边有三个点，点开点destory，几秒删除，在重新create一个droplet，从putty重新登录，安装脚本，熟练了两分钟就搞定，不怕被封ip了。</p>
+<p>爬梯愉快。</p>
+<h1 id="vps其他玩法"><a href="#vps其他玩法" class="headerlink" title="vps其他玩法"></a>vps其他玩法</h1><p><a href="http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/">VPS快速搭建traccar手机GPS追踪服务器</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%A2%AF%E5%AD%90/" rel="tag"># 梯子</a>
+          
+            <a href="/tags/ssr/" rel="tag"># ssr</a>
+          
+            <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag"># 科学上网</a>
+          
+            <a href="/tags/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC/" rel="tag"># 一键脚本</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/09/Linux%E8%BF%9B%E7%A8%8B%E7%9B%B8%E5%85%B3%E5%9F%B9%E8%AE%AD%E4%BD%9C%E4%B8%9A/" rel="next" title="Linux进程，shell scripts相关培训作业">
+                <i class="fa fa-chevron-left"></i> Linux进程，shell scripts相关培训作业
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/" rel="prev" title="APACHE几种功能的学习练习笔记">
+                APACHE几种功能的学习练习笔记 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/touxiang.gif"
+                alt="酉荻" />
+            
+              <p class="site-author-name" itemprop="name">酉荻</p>
+              <p class="site-description motion-element" itemprop="description">Always.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:luyiming1016@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#租借vps"><span class="nav-number">2.</span> <span class="nav-text">租借vps</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#vps简要原理"><span class="nav-number">2.1.</span> <span class="nav-text">vps简要原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vps租借"><span class="nav-number">2.2.</span> <span class="nav-text">vps租借</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ssh客户端安装"><span class="nav-number">3.</span> <span class="nav-text">ssh客户端安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过ssrmu-sh脚本安装ShadowsocksR"><span class="nav-number">4.</span> <span class="nav-text">通过ssrmu.sh脚本安装ShadowsocksR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装BBR加速"><span class="nav-number">5.</span> <span class="nav-text">安装BBR加速</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装SSR客户端，科学上网"><span class="nav-number">6.</span> <span class="nav-text">安装SSR客户端，科学上网</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SSR-for-Win"><span class="nav-number">6.1.</span> <span class="nav-text">SSR for Win</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSR-for-Android"><span class="nav-number">6.2.</span> <span class="nav-text">SSR for Android</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSR-for-Mac"><span class="nav-number">6.3.</span> <span class="nav-text">SSR for Mac</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ps-ip被封了怎么办？"><span class="nav-number">7.</span> <span class="nav-text">ps. ip被封了怎么办？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vps其他玩法"><span class="nav-number"></span> <span class="nav-text">vps其他玩法</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">酉荻</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: true,
+        appId: 'SfTyUdnrc6u7vQckktfMf2Wp-gzGzoHsz',
+        appKey: 'tBk0IQRdr9kGFInR4qoDRw9O',
+        placeholder: '欢迎评论',
+        avatar:'robohash',
+        guest_info:guest,
+        pageSize:'10' || 10,
+	avatar_cdn:'https://www.gravatar.com/avatar/',
+    });
+  </script>
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.4"></script>
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

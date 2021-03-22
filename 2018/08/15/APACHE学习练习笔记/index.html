@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/3232.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/3232.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/1616.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="avaya,Linux,httpd," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文主要通过几个有关apache中httpd.conf文件设置的小练习，来熟悉一些基本的apache功能实现。   Test1 Deny the Deny the ip address to request some special page  此功能的实现主要通过加入Order Allow，Deny顺序进行实现。有两种方式。 方式一在httpd.conf中加入一个Directory字段 &amp;lt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="APACHE几种功能的学习练习笔记">
+<meta property="og:url" content="http://luyiminggonnabeok.cn/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="酉荻的博客">
+<meta property="og:description" content="本文主要通过几个有关apache中httpd.conf文件设置的小练习，来熟悉一些基本的apache功能实现。   Test1 Deny the Deny the ip address to request some special page  此功能的实现主要通过加入Order Allow，Deny顺序进行实现。有两种方式。 方式一在httpd.conf中加入一个Directory字段 &amp;lt">
+<meta property="article:published_time" content="2018-08-15T06:09:00.000Z">
+<meta property="article:modified_time" content="2020-05-04T11:36:49.000Z">
+<meta property="article:author" content="酉荻">
+<meta property="article:tag" content="avaya">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="httpd">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '1R70HHMBOU',
+      apiKey: '5c8731abbbc0c8e76f1248d7e0ab3967',
+      indexName: 'udyblog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"博客里搜一下吧","hits_empty":"不好意思没找到${query}","hits_stats":"找到${hits}篇符合的文章，用时${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luyiminggonnabeok.cn/2018/08/15/APACHE学习练习笔记/"/>
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/b40c9eb3.js","daovoice")
+  daovoice('init', {
+      app_id: "b40c9eb3"
+    });
+  daovoice('update');
+  </script>
+
+
+  <title>APACHE几种功能的学习练习笔记 | 酉荻的博客</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="酉荻的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">酉荻的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脱离高级趣味</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于我">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luyiminggonnabeok.cn/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="酉荻">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/touxiang.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="酉荻的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">APACHE几种功能的学习练习笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-15T14:09:00+08:00">
+                2018-08-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index">
+                    <span itemprop="name">学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本文主要通过几个有关apache中httpd.conf文件设置的小练习，来熟悉一些基本的apache功能实现。</p>
+</blockquote>
+<hr>
+<h2 id="Test1"><a href="#Test1" class="headerlink" title="Test1"></a>Test1</h2><blockquote>
+<p>Deny the Deny the ip address to request some special page</p>
+</blockquote>
+<p>此功能的实现主要通过加入Order Allow，Deny顺序进行实现。有两种方式。</p>
+<h3 id="方式一"><a href="#方式一" class="headerlink" title="方式一"></a>方式一</h3><p>在httpd.conf中加入一个Directory字段</p>
+<pre><code>&lt;Directory /&gt;
+    Order Allow,Deny
+    Allow from all
+    Deny from xxx.xxx.xxx.xxx #阻止一个ip访问
+    Deny from xxx.xxx.xxx.xxx/xxx #阻止一个ip段访问
+&lt;/Directory&gt;</code></pre><p>这个字段表示，对于对本服务器所有的访问请求，先允许，后拒绝，允许的范围是所有，然后再拒绝特定字段ip，当然，我们还可以反着写，来实现只允许特定ip访问的功能，如下</p>
+<pre><code>&lt;Directory /&gt;
+    Order Deny,Allow
+    Deny from all
+    Allow from xxx.xxx.xxx.xxx #允许一个ip访问
+    Allow from xxx.xxx.xxx.xxx/xxx #允许一个ip段访问
+&lt;/Directory&gt;</code></pre><p>上面就实现了先拒绝再允许指定ip的操作。</p>
+<h3 id="方式二"><a href="#方式二" class="headerlink" title="方式二"></a>方式二</h3><p>如果服务器开了多个虚拟主机，也可以在VirtualHost字段添加Location字段实现这个功能，如下</p>
+<pre><code>&lt;VirtualHost *:8000&gt;
+    DocumentRoot /usr/local/httpd/htdocs
+    DirectoryIndex 002.gif
+    ServerName localhost:8000
+    &lt;Location /&gt;
+        Order Allow,Deny
+        Allow from all
+        Deny from all
+    &lt;/Location&gt;
+&lt;/VirtualHost&gt;</code></pre><h3 id="禁止通过IP访问功能"><a href="#禁止通过IP访问功能" class="headerlink" title="禁止通过IP访问功能"></a>禁止通过IP访问功能</h3><p>通过以上练习，我们可以用虚拟主机加这个方法，实现禁止用户通过我们的IP访问我们的网站，而只能通过域名访问的功能。如下</p>
+<pre><code>&lt;VirtualHost *:8000&gt;
+    ServerName localhost:8000
+    &lt;Location /&gt;
+        Order Allow,Deny
+        Allow from all
+        Deny from all
+    &lt;/Location&gt;
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:8000&gt;
+    DocumentRoot /usr/local/httpd/htdocs
+    DirectoryIndex 002.gif
+    ServerName www.mengze.wang:8000
+&lt;/VirtualHost&gt;</code></pre><p>如上，其实实现方法就是我们给一个网站添加了两个虚拟主机，一个servername用IP表示，一个用域名表示。我们先禁止了通过IP的虚拟主机的所有访问，然后不限制通过域名的访问，就达到了这个目的。</p>
+<hr>
+<h2 id="Test-2"><a href="#Test-2" class="headerlink" title="Test 2"></a>Test 2</h2><blockquote>
+<p>User authentication</p>
+</blockquote>
+<p>此功能主要通过apache自带的htpassed工具进行密码创建，然后通过指定目录下的AllowOverride设置来实现。</p>
+<p>首先用htpassed工具创建账户密码，htpassed在bin目录下。</p>
+<pre><code>#cd /usr/local/httpd/bin
+#./htpassed -bc /usr/local/httpd/mima/.mima1 ben lym1993512</code></pre><p>-b代表密码明文写在后米，不加b的话，命令后面不能直接接密码，输入命令之后会要求输入两遍密码。<br>-c代表新建密码文件，第一次建立需要，之后向其中添加账户就不需要。</p>
+<p>然后编辑httpd.conf文件</p>
+<pre><code>#vim $conf (为了方便我设置了环境变量conf=&quot;usr/local/httpd/conf/httpd.conf&quot;)
+
+&lt;Directory &quot;/usr/local/httpd/htdocs&quot;&gt;
+    Options Indexes FollowSymLinks
+    AllowOverride Authconfig
+    AuthType Basic
+    AuthName &quot;Enter your passwd&quot;
+    AuthUserFile /usr/local/httpd/mima/.mima1
+    Require user ben
+&lt;/Directory&gt;</code></pre><p>之后重启httpd服务就好用了，会提示输入用户名密码。</p>
+<hr>
+<h2 id="Test-3"><a href="#Test-3" class="headerlink" title="Test 3"></a>Test 3</h2><blockquote>
+<p>Maps web paths into filesystem paths and is used to</p>
+</blockquote>
+<p>此功能主要通过aliasmod实现，在httpd.conf文件中打开相关mod，然后在需要指定别名的目录字段之前加上Alias字段即可。举例如下</p>
+<pre><code>LoadModule alias_module modules/mod_alias.so
+
+Alias /readme &quot;/usr/local/httpd/htdocs/add&quot;
+&lt;Directory &quot;/usr/local/httpd/htdocs/add&quot;&gt;
+    Options Indexes MultiViews FollowSymLinks
+    AllowOverride None
+&lt;/Directory&gt;</code></pre><p>这样就可以在浏览器里直接通过hostname/readme访问服务器中/usr/local/httpd/htdocs/add目录下的内容。</p>
+<hr>
+<h2 id="proxy代理功能的实现"><a href="#proxy代理功能的实现" class="headerlink" title="proxy代理功能的实现"></a>proxy代理功能的实现</h2><blockquote>
+<p>用多个域名直接访问服务器的多个端口</p>
+</blockquote>
+<p>这就是之前我自己琢磨做的一个小功能，有这个需求是因为我租了一个服务器和一个域名，域名解析到服务器IP，之后在上面搭建了一个博客。搭建博客我用的是一个叫hexo的专门用来做博客的软件，不是用httpd，博客搭建好后，用hexo监听80端口开启服务，在浏览器输入我租用的域名，就可以访问博客了。</p>
+<p>之后我又租了两个域名，但是不知道做什么用，就想都解析到之前租用的服务器IP上，用httpd服务做两个小网站。</p>
+<p>但是问题来了，在浏览器里输入域名，访问网站，默认都是访问80端口，但是我服务器的80端口已经被hexo软件占用，来访问博客了，其他的域名解析到我的服务器IP后，直接输入域名也只会访问到我的博客，不能到新的网站。</p>
+<p>当然我可以在httpd里多开两个端口监听，比如5000，8000端口，然后新建两个VirtualHost对应到5000，8000端口，servername填我之后申请的两个域名，但是这样做的话，我每次在浏览器输入域名之后都要加上“:端口号”，这样很不方便。</p>
+<p>或者就是关了hexo软件，把博客迁移到httpd里来，开三个VirtualHost，都对应到80端口，Servername填三个域名，对应不同的根目录，但是hexo还是很方便的，我不想关软件。</p>
+<p>总之，我想要实现的是，在hexo软件不关闭的情况下，httpd服务也开启，三个域名分别能直接访问我的博客和其他两个网站。</p>
+<p>实现的方法就是用Proxy代理功能。首先在httpd.conf里开启几个mod</p>
+<pre><code>LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_connect_module modules/mod_proxy_connect.so
+LoadModule proxy_http_module modules/mod_proxy_http.so</code></pre><p>然后监听三个端口</p>
+<pre><code>Listen 80    #用来代理
+Listen 5000  #网站1端口
+Listen 8000  #网站2端口</code></pre><p>hexo服务我开了4000端口，作为博客访问的端口</p>
+<pre><code>hexo s -p 4000</code></pre><p>然后新开两个VirtualHost作为新网站</p>
+<pre><code>&lt;VirtualHost *:5000&gt;
+    DocumentRoot /usr/local/httpd/htdocs
+    DirectoryIndex 001.jpg
+    ServerName localhost:5000 #写localhost或者域名都可以，因为都解析到IP，下同
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:8000&gt;
+    DocumentRoot /usr/local/httpd/htdocs
+    DirectoryIndex 002.gif
+    ServerName www.mengze.wang:8000
+&lt;/VirtualHost&gt;</code></pre><p>然后加对应的代理VirtualHost</p>
+<pre><code>&lt;VirtualHost *:80&gt;
+
+    ServerName  www.luyiminggonnabeok.cn #博客
+
+    ServerAlias www.luyiminggonnabeok.cn
+
+    ProxyPreserveHost On
+
+    ProxyRequests Off
+
+    ProxyPass / http://123.207.249.242:4000/
+
+    ProxyPassReverse / http://123.207.249.242:4000/
+
+&lt;/VirtualHost&gt;
+
+
+&lt;VirtualHost *:80&gt;
+
+    ServerName  www.zoeswan.wang #网站1
+
+    ServerAlias www.zoeswan.wang
+
+    ProxyPreserveHost On
+
+    ProxyRequests Off
+
+    ProxyPass / http://123.207.249.242:5000/
+
+    ProxyPassReverse / https://123.207.249.242:5000/
+
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:80&gt;
+
+    ServerName  www.mengze.wang #网站2
+
+    ServerAlias www.mengze.wang
+
+    ProxyPreserveHost On
+
+    ProxyRequests Off
+
+    ProxyPass / http://www.mengze.wang:8000/
+
+    ProxyPassReverse / http://mengze.wang:8000/
+
+&lt;/VirtualHost&gt;</code></pre><p>这样通过代理，就可以把同是80端口的请求转发到对应的不同端口上，实现了需求。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/avaya/" rel="tag"># avaya</a>
+          
+            <a href="/tags/Linux/" rel="tag"># Linux</a>
+          
+            <a href="/tags/httpd/" rel="tag"># httpd</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/" rel="next" title="十分钟搭建自己的科学上网SSR梯子（自建VPN）">
+                <i class="fa fa-chevron-left"></i> 十分钟搭建自己的科学上网SSR梯子（自建VPN）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/16/CentOS-7%E4%B8%8BMySQL%E5%AE%89%E8%A3%85/" rel="prev" title="CentOS 7下MySQL安装，启动">
+                CentOS 7下MySQL安装，启动 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/touxiang.gif"
+                alt="酉荻" />
+            
+              <p class="site-author-name" itemprop="name">酉荻</p>
+              <p class="site-description motion-element" itemprop="description">Always.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:luyiming1016@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Test1"><span class="nav-number">1.</span> <span class="nav-text">Test1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#方式一"><span class="nav-number">1.1.</span> <span class="nav-text">方式一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方式二"><span class="nav-number">1.2.</span> <span class="nav-text">方式二</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#禁止通过IP访问功能"><span class="nav-number">1.3.</span> <span class="nav-text">禁止通过IP访问功能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Test-2"><span class="nav-number">2.</span> <span class="nav-text">Test 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Test-3"><span class="nav-number">3.</span> <span class="nav-text">Test 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#proxy代理功能的实现"><span class="nav-number">4.</span> <span class="nav-text">proxy代理功能的实现</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">酉荻</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: true,
+        appId: 'SfTyUdnrc6u7vQckktfMf2Wp-gzGzoHsz',
+        appKey: 'tBk0IQRdr9kGFInR4qoDRw9O',
+        placeholder: '欢迎评论',
+        avatar:'robohash',
+        guest_info:guest,
+        pageSize:'10' || 10,
+	avatar_cdn:'https://www.gravatar.com/avatar/',
+    });
+  </script>
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.4"></script>
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

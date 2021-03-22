@@ -1,0 +1,657 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>酉荻的博客</title>
+  
+  <subtitle>脱离高级趣味</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://luyiminggonnabeok.cn/"/>
+  <updated>2020-11-21T15:11:52.882Z</updated>
+  <id>http://luyiminggonnabeok.cn/</id>
+  
+  <author>
+    <name>酉荻</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Vless+ws+tls梯子搭建一键脚本教程</title>
+    <link href="http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/"/>
+    <id>http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/</id>
+    <published>2020-10-13T09:43:00.000Z</published>
+    <updated>2020-11-21T15:11:52.882Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>鉴于前段时间v2ray<br>客户端有点不和谐，大神们又搞出来了一个轻量的v2ray的协议，我用了一下，是比vmess快一些用法其实差不多，换个脚本罢了，写个教程吧。</p></blockquote><h1 id="vless简介"><a href="#vless简介" class="headerlink" title="vless简介"></a>vless简介</h1><p>… vless is more, vless is more…</p><h1 id="购买VPS"><a href="#购买VPS" class="headerlink" title="购买VPS"></a>购买VPS</h1><p>照例第一步，直接照抄之前的文章了。</p><p>你还是得有个vps，我现在用的<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr</a>，首要原因可以随时删除服务器重建服务器，以达到换ip的效果，其次这是我见过有日本节点的最便宜的一家（日本节点谁用谁知道，特别是上海小伙伴们），然后就是可以支付宝付款，很方便了。</p><p>首先注册vultr账号：<strong><a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr注册</a></strong></p><p>注册好第一次进去会提示让你完善信息，首次使用之前需要充值最少10刀，之后进入控制台界面，点击products，然后点右上角的加号添加server。</p><p><img src="/images/pasted-41.png" alt="upload successful"></p><p>如图配置，server选哪里的都可以，但是强烈建议选韩国日本的，真的比其他地方ping值低很多<strong>注意系统选without SElinux版本的，不然可能会有问题</strong>。。</p><p><img src="/images/pasted-42.png" alt="upload successful"></p><p>这里要注意了，默认系统是Centos8(Centos都出8了。。今天第一次发现), 一键脚本虽然也支持Centos8环境，但BBR只能Centos7，所以这里一定要选Centos7，之后配置选5刀的就可以，科学上网足够用了。</p><p><img src="/images/pasted-43.png" alt="upload successful"></p><p>选好了就可以deploy now了，之后会自动跳转到products节目，这时候你的server是installing的状态，等大概一分钟，就会running。</p><p>之后点右边的三个点（server刚起来也可能是叫manage，反正就是最右边的）进入server detail。（如果之后哪天ip真的被封了，也可以在这里点destroy然后重新建一个）</p><p><img src="/images/pasted-44.png" alt="upload successful"></p><p>这里是你的server的一些详细信息，<strong>记住你的ip address和password</strong>，密码需要点那个小眼睛才能看到。（大家可以看见这里月流量是1000G，我这个4个人用了大半个月也就用了100多G，所以5刀的流量足够了）</p><p><img src="/images/pasted-45.png" alt="upload successful"></p><p>到这里vps就做好了，进入下一步购买域名。</p><h1 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h1><p>Trojan和v2ray+ws+TLS一样，也是走https，所以也需要有一个自己的域名为我们做掩护。</p><p>买域名的地方也很多，国内主要是腾讯云和阿里云，域名不需要在国外供应商买，哪里买都一样。腾讯阿里都有新人优惠，第一次购买域名，像.club, .xyz之类的小众域名基本只要1块一年，很便宜了。我用的是腾讯云，这里也以腾讯云为例，其他平台的流程也基本一致。</p><p>首先进入<a href="https://cloud.tencent.com/" target="_blank" rel="noopener">腾讯云主页</a>, 先点右上角的免费注册，注册登陆之后再产品这里选域名注册，热门里就有。</p><p><img src="/images/pasted-46.png" alt="upload successful"></p><p>之后可以直接搜自己想要的域名，也可以直接点下面的1元域名优惠抢，首次注册都可以1块钱购买一年。（这里就不放图了，都是中文，应该很好操作了）</p><p>购买之后点右上角进入控制台，搜索云解析，进入这样一个界面。点击你自己的域名，或者点击右边域名对应的解析。（可以看到这里腾讯要求在国内开展网站需要备案，我们其实也相当于建立了一个网站，但是我的经验因为我们用国外的服务器所以不备案也没关系。）<br><img src="/images/pasted-48.png" alt="upload successful"></p><p>之后直接点击快速添加网站/邮箱解析，选择网站解析。之后输入刚才购买的vps的ip地址就好了，解析大概需要十分钟以内。</p><p><img src="/images/pasted-50.png" alt="upload successful"></p><p>到这里域名购买解析部分就结束了，可以进行下一步。</p><h1 id="脚本安装v2ray服务端"><a href="#脚本安装v2ray服务端" class="headerlink" title="脚本安装v2ray服务端"></a>脚本安装v2ray服务端</h1><p>首先下载一个ssh软件，比如putty，（我会放软件包度盘链接在下面，如果失效了就自己百度吧）打开软件是酱婶儿的。填进去你的ip然后open。</p><p><img src="/images/pasted-51.png" alt="upload successful"><br>然后用root账号登陆（注意login as 后面是填写用户名的，不是密码，先填用户名root回车再写密码，虽然好像很罗嗦，我之前也没想过这里也需要讲，但是真的有许多人卡在这一步），密码就是刚才记下的密码，输进去，敲回车。（注意这里可以直接把密码复制过去，但是一定注意第一不要复制到了空格，第二鼠标在putty里敲右键就是粘贴了，不要再ctrl+v，密码也是不会显示的，输进去直接回车就好）</p><p>依次输入下面的命令，安一下环境，安脚本：</p><pre><code>apt updateapt install -y git  ### 安装 git 环境wget -N --no-check-certificate -q -O install.sh &quot;https://raw.githubusercontent.com/wulabing/V2Ray_ws-tls_bash_onekey/dev/install.sh&quot; &amp;&amp; chmod +x install.sh &amp;&amp; bash install.sh</code></pre><p>脚本这样的：</p><p><img src="/images/pasted-109.png" alt="upload successful"></p><p>选1安装。等待一会。根据提示填写vps之前搞得自己解析的域名</p><p><img src="/images/pasted-111.png" alt="upload successful"></p><p>端口写443,回车再等一会：</p><p><img src="/images/pasted-112.png" alt="upload successful"></p><p>之后都选1：</p><p><img src="/images/pasted-113.png" alt="upload successful"></p><p>漫长等待之后，会出现安装完成的信息，然后会有配置参数，这里需要记下来（复制下来，在putty里左键光标选中的字符就是已经被复制了，不用ctrl+c了）。</p><p>到这时候，用任意一个浏览器输入你刚才注册的域名，应该就可以看到一个动态元素周期表网站，这就成功了。</p><p><img src="/images/pasted-114.png" alt="upload successful"></p><p>之后回到我们的putty界面，输入下面的代码安装BBR加速，安了会让科学上网速度提升很多。</p><pre><code>cd /usr/src &amp;&amp; wget -N --no-check-certificate &quot;https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/tcp.sh&quot; &amp;&amp; chmod +x tcp.sh &amp;&amp; ./tcp.sh</code></pre><p>在弹出的界面选1，安装内核，安装完之后vps会重启，putty会断开连接，重启等待1到2分钟，在重复刚才的步骤用putty登陆vps，输入以下代码，在弹出的界面输入5，使用BBR。</p><pre><code>cd /usr/src &amp;&amp; ./tcp.sh</code></pre><p>之后显示BBR启动成功，这样我们服务端架设的步骤就完全完成了。</p><p><strong>这时候注意最好在命令行输入service v2ray start，确保v2ray起来了，因为有时会发生系统重启v2ray进程起不来，会发生伪装网站可以进但配好不好用的状况</strong></p><h1 id="vless客户端使用"><a href="#vless客户端使用" class="headerlink" title="vless客户端使用"></a>vless客户端使用</h1><p>最新版v2rayN支持vless（别用老版本），下载地址：</p><pre><code>https://github.com/2dust/v2rayN/releases/download/3.26/v2rayN-Core.zip</code></pre><p>下载下来解压点进去文件夹，打开v2rayN.exe,右下角出现如下小图标：</p><p><img src="/images/pasted-54.png" alt="upload successful"></p><p>双击左键点开，选择服务器，添加<strong>vless</strong>服务器。将之前在putty中记下的参数输入这里，如下图，然后点击确定。注意这里路径这一栏一定别落下“/”。如图对照配置，别名随便填。</p><p><img src="/images/pasted-115.png" alt="upload successful"></p><p>之后就配置成功了，建议在配好的服务器上单击右键选择“批量导出分享URL至粘贴板”，然后在记事本中保存，之后会用在配置手机客户端里。</p><p>之后点右上角×关闭主界面，在右下角小图标单击右键。在服务器一栏勾选上已经配好的服务器，点击启用Http代理，代理模式选择全局模式。之后就可以开心的科学上网了。提醒一下记得不用的时候，按顺序先把启用http代理勾选取消，之后退出客户端，最后关电脑。如果有没有按顺序操作，再次开机发现上不了网了，请在这里的小电脑点右键，打开“网络和Internet设置”→代理→手动设置代理，将使用代理服务器一栏关闭。</p><h2 id="Mac-客户端-V2rayU"><a href="#Mac-客户端-V2rayU" class="headerlink" title="Mac 客户端 V2rayU"></a>Mac 客户端 V2rayU</h2><pre><code>https://github.com/yanue/V2rayU/releases/download/2.3.1/V2rayU.dmg</code></pre><p>用法和win的差不多了。</p><h2 id="v2rayNG-for-安卓"><a href="#v2rayNG-for-安卓" class="headerlink" title="v2rayNG for 安卓"></a>v2rayNG for 安卓</h2><pre><code>https://github.com/2dust/v2rayNG/releases/download/1.4.8/v2rayNG_1.4.8_arm64-v8a.apk</code></pre><h2 id="putty下载"><a href="#putty下载" class="headerlink" title="putty下载"></a>putty下载</h2><pre><code>https://rachel.heartango.com/putty-64bit-0.73-installer.msi</code></pre><h1 id="vps其他玩法"><a href="#vps其他玩法" class="headerlink" title="vps其他玩法"></a>vps其他玩法</h1><p><a href="http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/">VPS快速搭建traccar手机GPS追踪服务器</a></p><h1 id="其他梯子协议"><a href="#其他梯子协议" class="headerlink" title="其他梯子协议"></a>其他梯子协议</h1><p><a href="http://luyiminggonnabeok.cn/2020/10/13/Naive-ws-tls%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Naive+ws+tls科学上网梯子搭建一键脚本教程</a></p><p><a href="http://luyiminggonnabeok.cn/2019/12/07/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%90%AD%E5%BB%BATrojan%E6%A2%AF%E5%AD%90%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">一键脚本搭建Trojan科学上网梯子详细教程</a></p><p><a href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">一键脚本配置V2ray科学上网梯子详细教程</a>,</p><p><a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">十分钟搭建自己的科学上网SSR梯子</a>,</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;鉴于前段时间v2ray&lt;br&gt;客户端有点不和谐，大神们又搞出来了一个轻量的v2ray的协议，我用了一下，是比vmess快一些用法其实差不多，换个脚本罢了，写个教程吧。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;vless简介&quot;&gt;&lt;a hr
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="梯子" scheme="http://luyiminggonnabeok.cn/tags/%E6%A2%AF%E5%AD%90/"/>
+    
+      <category term="科学上网" scheme="http://luyiminggonnabeok.cn/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"/>
+    
+      <category term="vless" scheme="http://luyiminggonnabeok.cn/tags/vless/"/>
+    
+      <category term="vmess" scheme="http://luyiminggonnabeok.cn/tags/vmess/"/>
+    
+      <category term="v2ray" scheme="http://luyiminggonnabeok.cn/tags/v2ray/"/>
+    
+      <category term="一键脚本" scheme="http://luyiminggonnabeok.cn/tags/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Naive+ws+tls梯子搭建一键脚本教程</title>
+    <link href="http://luyiminggonnabeok.cn/2020/10/13/Naive-ws-tls%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/"/>
+    <id>http://luyiminggonnabeok.cn/2020/10/13/Naive-ws-tls%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/</id>
+    <published>2020-10-13T08:20:00.000Z</published>
+    <updated>2020-11-21T15:12:41.322Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>几个月没关心翻墙的事，猛然发现自己已经落伍了，才知道这段时间新出的Naive和Vless，立马新开了两台vps试了试，还不错，蹭一蹭过气的热度，写两篇简易教程。这是第一篇Naive的。</p></blockquote><h1 id="Naive简介"><a href="#Naive简介" class="headerlink" title="Naive简介"></a>Naive简介</h1><p>。。。我也不知道该咋简介。。too young too naive ??，也是配合ws+tls的一个轻量翻墙协议，用着还不错。</p><h1 id="购买VPS"><a href="#购买VPS" class="headerlink" title="购买VPS"></a>购买VPS</h1><p>首先第一步还是购买vps，我就照抄之前写的了。</p><p>我现在用的<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr</a>，首要原因可以随时删除服务器重建服务器，以达到换ip的效果，其次这是我见过有日本节点的最便宜的一家（日本节点谁用谁知道，特别是上海小伙伴们），然后就是可以支付宝付款，很方便了。</p><p>首先注册vultr账号：<strong><a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr注册</a></strong></p><p>注册好第一次进去会提示让你完善信息，首次使用之前需要充值最少10刀，之后进入控制台界面，点击products，然后点右上角的加号添加server。</p><p><img src="/images/pasted-41.png" alt="upload successful"></p><p>如图配置，server选哪里的都可以，但是强烈建议选日本的，真的比其他地方ping值低很多<strong>注意系统选without SElinux版本的，不然可能会有问题</strong>。。</p><p><img src="/images/pasted-42.png" alt="upload successful"></p><p>这里要注意了，默认系统是Centos8(Centos都出8了。。今天第一次发现), 一键脚本虽然也支持Centos8环境，但BBR只能Centos7，所以这里一定要选Centos7，之后配置选5刀的就可以，科学上网足够用了。</p><p><img src="/images/pasted-43.png" alt="upload successful"></p><p>选好了就可以deploy now了，之后会自动跳转到products节目，这时候你的server是installing的状态，等大概一分钟，就会running。</p><p>之后点右边的三个点（server刚起来也可能是叫manage，反正就是最右边的）进入server detail。（如果之后哪天ip真的被封了，也可以在这里点destroy然后重新建一个）</p><p><img src="/images/pasted-44.png" alt="upload successful"></p><p>这里是你的server的一些详细信息，<strong>记住你的ip address和password</strong>，密码需要点那个小眼睛才能看到。（大家可以看见这里月流量是1000G，我这个4个人用了大半个月也就用了100多G，所以5刀的流量足够了）</p><p><img src="/images/pasted-45.png" alt="upload successful"></p><p>到这里vps就做好了，进入下一步购买域名。</p><h1 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h1><p>Trojan和v2ray+ws+TLS一样，也是走https，所以也需要有一个自己的域名为我们做掩护。</p><p>买域名的地方也很多，国内主要是腾讯云和阿里云，域名不需要在国外供应商买，哪里买都一样。腾讯阿里都有新人优惠，第一次购买域名，像.club, .xyz之类的小众域名基本只要1块一年，很便宜了。我用的是腾讯云，这里也以腾讯云为例，其他平台的流程也基本一致。</p><p>首先进入<a href="https://cloud.tencent.com/" target="_blank" rel="noopener">腾讯云主页</a>, 先点右上角的免费注册，注册登陆之后再产品这里选域名注册，热门里就有。</p><p><img src="/images/pasted-46.png" alt="upload successful"></p><p>之后可以直接搜自己想要的域名，也可以直接点下面的1元域名优惠抢，首次注册都可以1块钱购买一年。（这里就不放图了，都是中文，应该很好操作了）</p><p>购买之后点右上角进入控制台，搜索云解析，进入这样一个界面。点击你自己的域名，或者点击右边域名对应的解析。（可以看到这里腾讯要求在国内开展网站需要备案，我们其实也相当于建立了一个网站，但是我的经验因为我们用国外的服务器所以不备案也没关系。）<br><img src="/images/pasted-48.png" alt="upload successful"></p><p>之后直接点击快速添加网站/邮箱解析，选择网站解析。之后输入刚才购买的vps的ip地址就好了，解析大概需要十分钟以内。</p><p><img src="/images/pasted-50.png" alt="upload successful"></p><p>到这里域名购买解析部分就结束了，可以进行下一步，使用proxySU软件一键搭建服务端。</p><h1 id="proxySU下载使用安装服务端"><a href="#proxySU下载使用安装服务端" class="headerlink" title="proxySU下载使用安装服务端"></a>proxySU下载使用安装服务端</h1><p>下载链接</p><pre><code>https://rachel.heartango.com/ProxySU-v2.0.3.zip</code></pre><p> 下载好后解压打开这个</p><p><img src="/images/pasted-100.png" alt="upload successful"></p><p>如下操作，这个软件还可以一件v2ray（应该是vmess），一键Trojan啥的，我没试过，有兴趣的试一下。</p><p><img src="/images/pasted-101.png" alt="upload successful"></p><p>像下面这样就安装成功了，BBR没安装成功没关系，待会我们手动安装。把配置信息都复制好，记一下。</p><p><img src="/images/pasted-102.png" alt="upload successful"></p><p>然后点击确定，会生成config.json文件，复制好。</p><p>这时候浏览器打开你的域名，应该能看到如下Caddy界面：</p><p><img src="/images/pasted-110.png" alt="upload successful"></p><h1 id="BBR-plus一键脚本安装"><a href="#BBR-plus一键脚本安装" class="headerlink" title="BBR plus一键脚本安装"></a>BBR plus一键脚本安装</h1><p>首先下载一个ssh软件，比如putty，（我会放软件包度盘链接在下面，如果失效了就自己百度吧）打开软件是酱婶儿的。填进去你的ip然后open。</p><p><img src="/images/pasted-51.png" alt="upload successful"><br>然后用root账号登陆（注意login as 后面是填写用户名的，不是密码，先填用户名root回车再写密码，虽然好像很罗嗦，我之前也没想过这里也需要讲，但是真的有许多人卡在这一步），密码就是刚才记下的密码，输进去，敲回车。（注意这里可以直接把密码复制过去，但是一定注意第一不要复制到了空格，第二鼠标在putty里敲右键就是粘贴了，不要再ctrl+v，密码也是不会显示的，输进去直接回车就好）</p><p>进入命令行后，直接复制输入以下代码进行BBR plus脚本安装。</p><pre><code>cd /usr/src &amp;&amp; wget -N --no-check-certificate &quot;https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/tcp.sh&quot; &amp;&amp; chmod +x tcp.sh &amp;&amp; ./tcp.sh</code></pre><p>在弹出的界面选2，安装内核，安装完之后vps会重启，putty会断开连接，重启等待1到2分钟，在重复刚才的步骤用putty登陆vps，输入以下代码，在弹出的界面输入7，使用BBR plus。</p><pre><code>cd /usr/src &amp;&amp; ./tcp.sh</code></pre><p>之后显示BBR启动成功，这样我们服务端架设的步骤就完全完成。了。<br><strong>这时候注意最好在命令行输入service v2ray start，确保v2ray起来了，因为有时会发生系统重启v2ray进程起不来，会发生伪装网站可以进但配好不好用的状况</strong></p><h1 id="客户端下载"><a href="#客户端下载" class="headerlink" title="客户端下载"></a>客户端下载</h1><p>下载链接：</p><pre><code>https://github.com/klzgrad/naiveproxy/releases/download/v86.0.4240.75-1/naiveproxy-v86.0.4240.75-1-win-x64.zip</code></pre><p>解压后，将刚才的config.json文件覆盖过来替换原来的config.json文件。</p><p><img src="/images/pasted-108.png" alt="upload successful"></p><p>然后双击打开naive.exe，先放着。</p><h1 id="配合v2rayN使用"><a href="#配合v2rayN使用" class="headerlink" title="配合v2rayN使用"></a>配合v2rayN使用</h1><p>这里不一定是v2rayN,任何一个有sock代理功能的软件都行，我这有V2rayN就方便点。</p><p>v2rayN下载地址：</p><pre><code>https://rachel.heartango.com/v2rayN-Core.zip</code></pre><p>打开以后选服务器，添加sock服务器</p><p><img src="/images/pasted-106.png" alt="upload successful"></p><p>然后照着填：</p><p><img src="/images/pasted-107.png" alt="upload successful"></p><p>点击确定，就完成啦，在v2rayN中打开服务就可以科学上网了！</p><p>有同学反映navie.exe打开闪退，我还没遇到这样的情况，可能是windows版本问题，闪退的话我也没招了，说实话还要用socks代理着实挺麻烦的, 用vmess或者vless吧，博客里有教程。</p><h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><h2 id="putty下载"><a href="#putty下载" class="headerlink" title="putty下载"></a>putty下载</h2><pre><code>https://rachel.heartango.com/putty-64bit-0.73-installer.msi</code></pre><h2 id="其他协议"><a href="#其他协议" class="headerlink" title="其他协议"></a>其他协议</h2><p><a href="http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Vless+ws+tls一键脚本教程</a></p><p><a href="http://luyiminggonnabeok.cn/2019/12/07/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%90%AD%E5%BB%BATrojan%E6%A2%AF%E5%AD%90%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">一键脚本配置V2ray梯子详细教程（包括vps，域名租用，客户端使用）</a></p><p><a href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">一键脚本搭建科学上网Trojan梯子(自建VPN)详细教程</a></p><p><a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">十分钟搭建自己的科学上网SSR梯子</a></p><h1 id="vps其他玩法"><a href="#vps其他玩法" class="headerlink" title="vps其他玩法"></a>vps其他玩法</h1><p><a href="http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/">VPS快速搭建traccar手机GPS追踪服务器</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;几个月没关心翻墙的事，猛然发现自己已经落伍了，才知道这段时间新出的Naive和Vless，立马新开了两台vps试了试，还不错，蹭一蹭过气的热度，写两篇简易教程。这是第一篇Naive的。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;Naive
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="梯子" scheme="http://luyiminggonnabeok.cn/tags/%E6%A2%AF%E5%AD%90/"/>
+    
+      <category term="科学上网" scheme="http://luyiminggonnabeok.cn/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"/>
+    
+      <category term="naive" scheme="http://luyiminggonnabeok.cn/tags/naive/"/>
+    
+      <category term="一键脚本" scheme="http://luyiminggonnabeok.cn/tags/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>听歌谬论</title>
+    <link href="http://luyiminggonnabeok.cn/2020/06/17/%E5%90%AC%E6%AD%8C%E8%B0%AC%E8%AE%BA/"/>
+    <id>http://luyiminggonnabeok.cn/2020/06/17/%E5%90%AC%E6%AD%8C%E8%B0%AC%E8%AE%BA/</id>
+    <published>2020-06-17T13:15:00.000Z</published>
+    <updated>2020-06-17T13:23:26.432Z</updated>
+    
+    <content type="html"><![CDATA[<p>今天健身房里竟然放了莫文蔚的《盛夏的果实》。 </p><p>大哥们顿时骂声一片，我也无力的想走了，但还是在边嘴上附和着大哥骂着，然后其实还是在认真听，当好好休息了。健身房一般会放一些欧美R&amp;B或者说唱，但这么多年也遇到几次类似在一首Eminem后突然接一首十几年前的梁静茹这种情况，虽然不合时宜的令人泄气，但其实自己内心并未那么反感，感觉这个时候的我完全脱离了周边的世界，只是在听歌。 </p><p>而沉浸“听歌”这种状态，在我来说其实是不常有的。 </p><p>各种音乐当然每天都在我的耳机循环，但在我而言，沉浸在“听歌”里，不是指手头在做其他事时，插着耳机放网易的每日歌单。而是真的呆在那里，听着歌词，沉浸在歌手演唱的世界里，或者说是自己的世界里。这样的时候仿佛越来越少了。而当我达到“听歌”的状态时，往往还是收起了我的HIphop歌单，默默打开周杰伦，陈奕迅，五月天，听着十几年甚至二十年前的歌，好吧，还是承认自己渐渐不年轻了。 </p><p>有时候会感叹现在的音乐不好听了，会对“年轻人”们的新歌嗤之以鼻，甚至就像郑钧说的，现在华语音乐都是屎。这样想多了，不禁也渐渐看不起自己了，你呀你，是不是变成了二十年前大人们的样子。二十年前周杰伦刚出道，渐渐的，我第一次也是最后一次变成一个狂热粉丝，狂热到整个小学都抵触听其他任何人的音乐，并且乐于和当时的林俊杰粉丝展开捍卫偶像的战斗，这样下来，以至于我到初中高中，在KTV才接触到了陈奕迅，孙燕姿，梁静茹等人。想想当时我的父母看待周杰伦的态度，几乎就和我看待现在小朋友们听的音乐的态度一样，唱的什么玩意儿。</p><p>这时候，我会想一个问题。真的是现在的音乐不好听吗。甚至说，真的是二十年前的周杰伦好听吗，现在的周杰伦不好听吗。 </p><p>或者说，我在“听歌”时，是在听所谓“好听的歌”吗？ </p><p>这样回述过去，好像我从来没有自己选择过“好听的歌”。记得第一次听周杰伦，是在兵团农场哥哥家里，暑假的夏天，两个哥哥一直用一个随身听放一张JAY，给我说这是现在最流行的歌，特别好听。我也想听，好不容易才能分我一个耳机，那时候我听到的是“温柔的。。爱女人。。透明的。。爱女人。。坏坏的。。爱女人”，听着有点害羞，但我好像是第一次知道了，这就是好听的歌。之后渐渐注意到周杰伦的一切，知道了这个人唱的都是好听的歌，现在想想要是当年我听的是蔡徐坤我大概也能成脑残粉。 </p><p>初中家里发生些许变故，导致我有时心情不是很好，碰巧这时又和一个单亲家庭喜爱音乐的孩子玩的很好，可能是因为有些共同话题，并且处于非主流气息弥漫的青春期，总想把自己各方面搞得悲伤一点，以符合我的qq空间基调。这个朋友当时喜欢陈奕迅，唱歌又好，常带我去KTV循环陈奕迅，慢慢陈奕迅在我年少的心里就和悲伤划上等号，那时候有时循环着《单车》流眼泪，有时候听着《沙龙》看照片，或者听着什么《好久不见》，《红玫瑰》搞精神非主流。陈奕迅好不好听，挺好的。快不快乐，一点也不快乐。高中认识了一些可爱的，彩色的人，我们一起练吉他，当然是五月天最好练，直到《温柔》的歌词忘了，或许的和弦也不会忘，练到手指磨破了，喉咙唱干了，我也变彩色了。不管五月天是不是最好听，但是五月天最明亮快乐的。 </p><p>去年爷爷去世了，估计兵团以后也只会在上坟的时候回去。在农村和哥哥们听歌的夏天是不会有了。非主流的朋友也不非主流了，已经练了快十年的古典歌剧，期待十年后能成为大明星带带老哥哈哈哈。当年一起五月天的朋友们，如今都天南海北，有的也越散越远，不再能畅谈女人，理想与未来，也不怎么再有交集。但还是希望他一直会是彩色的，能照亮身边世界的人。</p><p>“听歌”时，大概是在听着这些人和事，听着自己。时间和经历融入音乐，音乐大概就不能用好不好听来定义了，那些音乐是我成为我的原因之一。所以长到这个岁数了，很少主动让自己在陷入“听歌”这种情形，毕竟也没时间。也就是有时候，像是周杰伦又发新歌了，先掏三块钱听几下，然后对自己说二十遍，好听！周杰伦牛皮，之后转到朋友圈，带上“好听！周杰伦牛皮！”之后再听一遍过后，不自觉地点开周杰伦的老歌，循环，入睡。因为，周杰伦真的是，好听，牛皮，我没有骗自己。</p><hr><p>写完这篇文章后，我关掉周杰伦循环，又随手点开一个视频，魔动闪霸：对手。。。。。。行吧，我感觉到了我上面所有的话都是在装b。。。。你在写什么玩意。。心情立马不一样了，好听的歌就是好听😂😂</p><p>但是写了这么多字，想想还是不舍得删了，为什么自己这么这么快就把自己否定了。 </p><p>写的都是心情，听的也是心情吧。</p><p>也许夜晚容易让人忧郁，但是此时此刻确实又开心了。</p><p>再一次的，那我期待明天。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;今天健身房里竟然放了莫文蔚的《盛夏的果实》。 &lt;/p&gt;
+&lt;p&gt;大哥们顿时骂声一片，我也无力的想走了，但还是在边嘴上附和着大哥骂着，然后其实还是在认真听，当好好休息了。健身房一般会放一些欧美R&amp;amp;B或者说唱，但这么多年也遇到几次类似在一首Eminem后突然接一首十几年前
+      
+    
+    </summary>
+    
+    
+      <category term="日常" scheme="http://luyiminggonnabeok.cn/categories/%E6%97%A5%E5%B8%B8/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>杂乱的River flows in you</title>
+    <link href="http://luyiminggonnabeok.cn/2020/02/14/%E6%9D%82%E4%B9%B1%E7%9A%84River-flows-in/"/>
+    <id>http://luyiminggonnabeok.cn/2020/02/14/%E6%9D%82%E4%B9%B1%E7%9A%84River-flows-in/</id>
+    <published>2020-02-14T05:19:00.000Z</published>
+    <updated>2020-05-04T11:36:49.629Z</updated>
+    
+    <content type="html"><![CDATA[<p>前段时间开始重新练琴，分享一个拙略的演奏吧哈哈哈。</p><iframe src="//player.bilibili.com/player.html?aid=88879783&cid=151822958&page=1" width="780" height="480" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe><p>弹得不好大家多多包涵哈哈。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;前段时间开始重新练琴，分享一个拙略的演奏吧哈哈哈。&lt;/p&gt;
+&lt;iframe src=&quot;//player.bilibili.com/player.html?aid=88879783&amp;cid=151822958&amp;page=1&quot; width=&quot;780&quot; height=&quot;480&quot; 
+      
+    
+    </summary>
+    
+    
+      <category term="吉他" scheme="http://luyiminggonnabeok.cn/categories/%E5%90%89%E4%BB%96/"/>
+    
+    
+      <category term="指弹" scheme="http://luyiminggonnabeok.cn/tags/%E6%8C%87%E5%BC%B9/"/>
+    
+      <category term="吉他" scheme="http://luyiminggonnabeok.cn/tags/%E5%90%89%E4%BB%96/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>岁末闲言</title>
+    <link href="http://luyiminggonnabeok.cn/2019/12/30/%E5%B2%81%E6%9C%AB%E9%97%B2%E8%A8%80/"/>
+    <id>http://luyiminggonnabeok.cn/2019/12/30/%E5%B2%81%E6%9C%AB%E9%97%B2%E8%A8%80/</id>
+    <published>2019-12-30T09:53:00.000Z</published>
+    <updated>2020-05-04T11:36:49.636Z</updated>
+    
+    <content type="html"><![CDATA[<p>挺气人的。<br>下午写了两个点的一篇关于GPS服务的教程文章写完没保存上，愤然起身离开办公室，感觉白加了两小时班不知道这个博客后台插件是有什么毛病了。刚才又突然看着攒了一个点写了千八百字儿的抒情小作文太不顺眼了，删了。这么多年了总是爱写些特感性的东西感动感动自己，但也还是年纪大了，感性确实没剩多少了，再憋就是矫情了，不说感动自己，不恶心着自己就是好了。<br>说起来本来半年多没更新的博客，自从工作以后就又变得活跃起来。也是自己不要脸的搬运了别人的成果，蹭了个热点写些没什么技术含量的文章赚了挺多点击量。渐渐感觉博客还像那么回事。抒情作文不写了，随便写两句吧，今晚写不完个东西真是不能放自己去睡觉了。新的一点希望自己完成下面几件事情：</p><ol><li>想好自己想活成什么样</li><li>加油活成那样</li><li>在过程中有趣一些</li><li>有趣大概是指尽量别把每一天活成同一天。</li><li>就是别把今天活成昨天，实在不行，把今天活成明天。</li><li>把今天活成明天，也是说好好爱身边也爱着自己的人，珍惜今天的美好。</li><li>先就这样</li></ol><p>元旦快乐！</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;挺气人的。&lt;br&gt;下午写了两个点的一篇关于GPS服务的教程文章写完没保存上，愤然起身离开办公室，感觉白加了两小时班不知道这个博客后台插件是有什么毛病了。刚才又突然看着攒了一个点写了千八百字儿的抒情小作文太不顺眼了，删了。这么多年了总是爱写些特感性的东西感动感动自己，但也还是
+      
+    
+    </summary>
+    
+    
+      <category term="日常" scheme="http://luyiminggonnabeok.cn/categories/%E6%97%A5%E5%B8%B8/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>VPS快速搭建traccar手机GPS追踪服务器</title>
+    <link href="http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/"/>
+    <id>http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/</id>
+    <published>2019-12-29T23:39:00.000Z</published>
+    <updated>2020-05-04T11:36:48.995Z</updated>
+    
+    <content type="html"><![CDATA[<p>这篇文章昨天已经写过一遍了，花了我2小时，结果没保存，今天又花了半小时给自己做工作重写一遍这篇文章…</p><blockquote><p>请勿将本工具用作非法用途！！！本文只做技术交流，违法法律后果自负。</p></blockquote><p>我一开始接触vps也就是因为科学上网，但是vps能做的可远不止如此，后来自己慢慢探索，发现了很多可以用vps完成的有用或好玩的事，包括做网盘，做游戏私人服务器，游戏加速器，搭博客（这个博客就是搭在一台vps上后，将静态页面同步到github和coding上做的），立个flag，新的一年慢慢吧这些好玩的事都写一遍教程吧！今天先写一个简单的GPS服务器的搭建</p><p>前几天偶然发现一个很棒的工具traccar，简单说就是一个开源的GPS追踪系统，支持170多种GPS协议以及1500多种GPS设备。功能很强大，这两天我也每太研究明白只会用基本功能，不过已经让没见识过世面的我觉得很强大了，主界面是这样的（地图是很清晰的，这里为了安全随意马赛克了一下）：</p><p><img src="/images/pasted-57.png" alt="upload successful"></p><p>真是手机防盗防丢利器啊，试想，当你和小伙伴出去玩，手机突然找不见了，小伙伴为你着急之时，你淡定的借过他的手机，打开浏览器，简单输入一串ip地址，就马上定位到手机现在的位置，行动速度等信息，装13利器啊。（反正我觉得比ios的查找设备位置好用多了）同样也是防止老人小孩走失的利器，能随时知道家人位置。</p><h1 id="服务端安装配置"><a href="#服务端安装配置" class="headerlink" title="服务端安装配置"></a>服务端安装配置</h1><h2 id="vps租用"><a href="#vps租用" class="headerlink" title="vps租用"></a>vps租用</h2><p>第一步，你还是得有个vps，已经有的（比如之前租过vps搭梯子的同学）可以跳过这一步。<br>我现在用的<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr</a>，首要原因可以随时删除服务器重建服务器，以达到换ip的效果，其次之前我也是用的这家的vps搭梯子，然后就是可以支付宝付款，很方便了。</p><p><a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr注册</a></p><p>注册好第一次进去会提示让你完善信息，首次使用之前需要充值最少10刀，之后进入控制台界面，点击products，然后点右上角的加号添加server。</p><p><img src="/images/pasted-41.png" alt="upload successful"></p><p>如图配置，server选哪里的都可以，但是强烈建议选日本的，真的比其他地方ping值低很多。。</p><p><img src="/images/pasted-42.png" alt="upload successful"></p><p>这里要注意了，默认系统是Centos8, 这篇教程的搭建都是在Centos7基础上完成的，所以大家按我教程来的话还是选Centos7吧，之后配置选5刀的就可以，科学上网足够用了。</p><p><img src="/images/pasted-43.png" alt="upload successful"></p><p>选好了就可以deploy now了，之后会自动跳转到products节目，这时候你的server是installing的状态，等大概一分钟，就会running。</p><p>之后点右边的三个点（server刚起来也可能是叫manage，反正就是最右边的）进入server detail。（如果之后哪天ip真的被封了，也可以在这里点destroy然后重新建一个）</p><p><img src="/images/pasted-44.png" alt="upload successful"></p><p>这里是你的server的一些详细信息，<strong>记住你的ip address和password</strong>，密码需要点那个小眼睛才能看到。</p><p><img src="/images/pasted-45.png" alt="upload successful"></p><p>下面进入下一步环境搭建。</p><h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>Traccar需要jre和MySQL的支持，所以环境搭建主要也就事安装他们。<br>但是首先第一步你还是得有个ssh软件，比如PUTTY。我会放软件包度盘链接在下面，如果失效了就自己百度吧。<br>打开软件是酱婶儿的。填进去你的ip然后open。</p><p><img src="/images/pasted-51.png" alt="upload successful"><br>然后用root账号登陆（注意login as 后面是填写用户名的，不是密码，先填用户名root回车再写密码，虽然好像很罗嗦，我之前也没想过这里也需要讲，但是真的有许多人卡在这一步），密码就是刚才记下的密码，输进去，敲回车。（注意这里可以直接把密码复制过去，但是一定注意第一不要复制到了空格，第二鼠标在putty里敲右键就是粘贴了，不要再ctrl+v，密码也是不会显示的，输进去直接回车就好）</p><p>下面正式搭建环境，首先安装一个解压软件：</p><pre><code>yum install unzip</code></pre><p>安装jre：</p><pre><code>yum install jre</code></pre><p>MySQL在Centos7下安装就稍微麻烦点了，因为CentOS7 版本将MySQL数据库软件从默认的程序列表中移除，用mariadb代替了。我们就不能直接yum了，改间接yum。。</p><p>首先下载rpm包：</p><pre><code>wget http://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm</code></pre><p>解压一下rpm包：</p><pre><code>rpm -ivh mysql-community-release-el7-5.noarch.rpm</code></pre><p>这会儿在yum一下MySQL：</p><pre><code>yum install mysql-community-server</code></pre><p>安好重启一下服务：</p><pre><code>service mysqld restart</code></pre><p>之后我们进入MySQL设置一下密码：</p><pre><code>mysql -u root</code></pre><p>设置密码为123456（之后traccar配置文件里的密码我也改成123456了，所以这里大家最好不要改其他密码，改了的话就自行将之后的traccar.xml文件中对应MySQL密码也改了）</p><pre><code>mysql&gt; set password for &apos;root&apos;@&apos;localhost&apos; =password(&apos;123456&apos;);</code></pre><p>之后退出MySQL：</p><pre><code>mysql&gt; exit;</code></pre><p>最后在iptable打开8082端口：</p><pre><code>iptables -I INPUT -p tcp --dport  8082 -j ACCEPT</code></pre><h2 id="Traccar服务端安装配置"><a href="#Traccar服务端安装配置" class="headerlink" title="Traccar服务端安装配置"></a>Traccar服务端安装配置</h2><p>接着开始配置traccar服务，首先为其创建一个MySQL数据库：</p><pre><code>echo &quot;create database traccar&quot; | mysql -u root -p</code></pre><p>接着会显示ENter psaaword，这里输入刚才的123456就可以。之后下载traccar安装包：</p><pre><code>wget https://github.com/traccar/traccar/releases/download/v4.3/traccar-linux-64-4.3.zip</code></pre><p>解压安装包：</p><pre><code>unzip traccar-linux-*.zip</code></pre><p>安装服务端：</p><pre><code>./traccar.run</code></pre><p>下载traccar配置文件：</p><pre><code>wget https://raw.githubusercontent.com/luyiming1016/gittest/master/traccar.xml</code></pre><p>将默认配置替换：</p><pre><code>cp traccar.xml /opt/traccar/conf/</code></pre><p>启动服务：</p><pre><code>sudo systemctl start traccar.service</code></pre><p>查看服务状态：</p><pre><code>sudo systemctl status traccar.service</code></pre><p>如果看到这里状态是active，就说明服务启动成功了，这时候打开浏览器，输入ip:8082，注意这里分号要用英文半角符号，如：</p><pre><code>123.123.123.123:8082</code></pre><p>这时候就能看到登陆界面：</p><p><img src="/images/pasted-66.png" alt="upload successful"></p><p>默认Email和password都是admin，也可以自己新注册用户。</p><p>进入以后就可以看到主界面了，接下来我们配置客户端。</p><h1 id="客户端安装配置"><a href="#客户端安装配置" class="headerlink" title="客户端安装配置"></a>客户端安装配置</h1><p><img src="/images/pasted-67.png" alt="upload successful"><br>因为Traccar是开源的，理论上基本只要有gps的设备都可以自行编译安装客户端，官网提供了两种安卓客户端（竟然还有个隐藏版。。），在Traccar官方网站直接下载就可以，放一下链接：</p><pre><code>https://www.traccar.org/client/</code></pre><p>我手机是ios的，下面就以ios客户端为例介绍，安卓应该也差不多，ios直接在App store搜索traccar client下载就好, 客户端打开后界面如下：</p><p><img src="/images/pasted-68.png" alt="upload successful"></p><p>这里设备编码自己填一个六位数就可以（最好还是小于65535吧，我也没试过大一些的数字）<br>，假设自己vps的ip为123.123.123.123，服务器地址填写方式如下吗，同样注意使用英文符号：</p><pre><code>http://123.123.123.123:8082</code></pre><p>定位精度和频率自己选择，我选的精度高，频率45秒一次，之后打开定位开关。</p><p>接下来我们回到浏览器的服务端界面上，</p><p><img src="/images/pasted-69.png" alt="upload successful"></p><p>在Devices这里点加号，随意输入一个设备名称，填好刚才在客户端设定的编号，你的设备就出现在了设备栏里，这时设备状态还没更新，是红色状态，稍等一会设备栏变绿了，双击一下设备，就可以在Map找到自己手机的位置了。</p><p><img src="/images/pasted-70.png" alt="upload successful"></p><p>怎么样，精度是不是还挺高的，哈哈，traccar功能挺多的，像左下角还会显示所在位置海拔，角度，方向等等，大家自己探索吧~</p><h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>putty下载</p><pre><code>链接：https://pan.baidu.com/s/1MGJpnii6nR6A_Rjgd_vkWg 提取码：0b10 </code></pre><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.traccar.org/" target="_blank" rel="noopener">Traccar官方网站</a><br><a href="https://mr96.me/1006.html" target="_blank" rel="noopener">用 VPS 搭建现代全功能 GPS 追踪系统 （Traccar）</a><br><a href="https://www.cnblogs.com/starof/p/4680083.html" target="_blank" rel="noopener">Centos7 MySQL数据库安装与配置</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;这篇文章昨天已经写过一遍了，花了我2小时，结果没保存，今天又花了半小时给自己做工作重写一遍这篇文章…&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;请勿将本工具用作非法用途！！！本文只做技术交流，违法法律后果自负。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;我一开始接触vps也就
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
+    
+      <category term="mysql" scheme="http://luyiminggonnabeok.cn/tags/mysql/"/>
+    
+      <category term="traccar" scheme="http://luyiminggonnabeok.cn/tags/traccar/"/>
+    
+      <category term="GPS" scheme="http://luyiminggonnabeok.cn/tags/GPS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一键脚本搭建科学上网Trojan梯子(自建VPN)详细教程</title>
+    <link href="http://luyiminggonnabeok.cn/2019/12/07/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%90%AD%E5%BB%BATrojan%E6%A2%AF%E5%AD%90%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/"/>
+    <id>http://luyiminggonnabeok.cn/2019/12/07/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%90%AD%E5%BB%BATrojan%E6%A2%AF%E5%AD%90%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/</id>
+    <published>2019-12-07T10:24:00.000Z</published>
+    <updated>2020-11-21T15:13:37.211Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>先声明一下，题目写了自建VPN只是为了引流，毕竟现在大家一提科学上网还说vpn，但其实这些科学上网协议和vpn差别很大，可以说根本不是一回事，希望大家不要被我误导，想了解具体区别可以google或者学习一下TCP/IP知识。<br>先说在前面，之前写了<a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">SSR</a>和<a href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">v2ray</a>的脚本搭建教程，有小伙伴说SSR和v2ray都要不行了，v2ray也会被流量识别，以后还是得用Trojan，其实吧也不见得，我三种协议的梯子都在用，v2ray+ws+TLS和Trojan是要比SSR稳定些，但速度（指带宽）方面其实是略逊于SSR的，且SSR各方面更加成熟，不管服务端还是客户端都更加简单易用。且v2ray+ws+TLS和Trojan两者之前至今其实我也不了解本质上的区别，都是走https，或许是Trojan更加直接一些，使用上来说，除了在软路由上能感觉同一节点，Trojan带宽比v2ray高出一点，在其他设备上没有感觉有什么区别，说这么多也就是想先建议大家根据需求选择适合自己来搭，不一定要赶潮流追最新的协议，并且被封这件事其实也是挺玄学的，不是说Trojan就一定不会被封，也不是说SSR就一定马上被封，很大程度上还是看脸，不嫌麻烦一直用SSR也没什么大不了，被封了换ip重建服务，也用不了几分钟。</p></blockquote><h1 id="Trojan简介"><a href="#Trojan简介" class="headerlink" title="Trojan简介"></a>Trojan简介</h1><p>。。。说实话我真的不知道该怎么简介，这半年多比较流行，我也没找到官方白皮书，简单理解为就是v2ray+ws+TLS的lite版吧，也是走https，安全稳定性比较高。在某些设备上表现比v2ray+ws+TLS好一些。不了解v2ray+ws+TLS的小伙伴可以去看我之前的文章，放链接在文章底下。</p><h1 id="购买VPS"><a href="#购买VPS" class="headerlink" title="购买VPS"></a>购买VPS</h1><p>Ok，正式进入教程，首先第一步，你还是得有个vps，我现在用的<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr</a>，首要原因可以随时删除服务器重建服务器，以达到换ip的效果，其次这是我见过有日本节点的最便宜的一家（日本节点谁用谁知道，特别是上海小伙伴们），然后就是可以支付宝付款，很方便了。</p><p>首先注册vultr账号：<strong><a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr注册</a></strong></p><p>注册好第一次进去会提示让你完善信息，首次使用之前需要充值最少10刀，之后进入控制台界面，点击products，然后点右上角的加号添加server。</p><p><img src="/images/pasted-41.png" alt="upload successful"></p><p>如图配置，server选哪里的都可以，但是强烈建议选韩国日本的，真的比其他地方ping值低很多。。<strong>注意系统选without SElinux版本的，不然可能会有问题</strong></p><p><img src="/images/pasted-42.png" alt="upload successful"></p><p>这里要注意了，默认系统是Centos8(Centos都出8了。。今天第一次发现), 一键脚本虽然也支持Centos8环境，但BBR只能Centos7，所以这里一定要选Centos7，之后配置选5刀的就可以，科学上网足够用了。</p><p><img src="/images/pasted-43.png" alt="upload successful"></p><p>选好了就可以deploy now了，之后会自动跳转到products节目，这时候你的server是installing的状态，等大概一分钟，就会running。</p><p>之后点右边的三个点（server刚起来也可能是叫manage，反正就是最右边的）进入server detail。（如果之后哪天ip真的被封了，也可以在这里点destroy然后重新建一个）</p><p><img src="/images/pasted-44.png" alt="upload successful"></p><p>这里是你的server的一些详细信息，<strong>记住你的ip address和password</strong>，密码需要点那个小眼睛才能看到。（大家可以看见这里月流量是1000G，我这个4个人用了大半个月也就用了100多G，所以5刀的流量足够了）</p><p><img src="/images/pasted-45.png" alt="upload successful"></p><p>到这里vps就做好了，进入下一步购买域名。</p><h1 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h1><p>Trojan和v2ray+ws+TLS一样，也是走https，所以也需要有一个自己的域名为我们做掩护。</p><p>买域名的地方也很多，国内主要是腾讯云和阿里云，域名不需要在国外供应商买，哪里买都一样。腾讯阿里都有新人优惠，第一次购买域名，像.club, .xyz之类的小众域名基本只要1块一年，很便宜了。我用的是腾讯云，这里也以腾讯云为例，其他平台的流程也基本一致。</p><p>首先进入<a href="https://cloud.tencent.com/" target="_blank" rel="noopener">腾讯云主页</a>, 先点右上角的免费注册，注册登陆之后再产品这里选域名注册，热门里就有。</p><p><img src="/images/pasted-46.png" alt="upload successful"></p><p>之后可以直接搜自己想要的域名，也可以直接点下面的1元域名优惠抢，首次注册都可以1块钱购买一年。（这里就不放图了，都是中文，应该很好操作了）</p><p>购买之后点右上角进入控制台，搜索云解析，进入这样一个界面。点击你自己的域名，或者点击右边域名对应的解析。（可以看到这里腾讯要求在国内开展网站需要备案，我们其实也相当于建立了一个网站，但是我的经验因为我们用国外的服务器所以不备案也没关系。）<br><img src="/images/pasted-48.png" alt="upload successful"></p><p>之后直接点击快速添加网站/邮箱解析，选择网站解析。之后输入刚才购买的vps的ip地址就好了，解析大概需要十分钟以内。</p><p><img src="/images/pasted-50.png" alt="upload successful"></p><p>到这里域名购买解析部分就结束了，可以进行下一步，也是核心的一步，在vps上用脚本安装Trojan服务端。</p><h1 id="脚本安装v2ray服务端"><a href="#脚本安装v2ray服务端" class="headerlink" title="脚本安装v2ray服务端"></a>脚本安装v2ray服务端</h1><p>首先下载一个ssh软件，比如putty，（我会放软件包度盘链接在下面，如果失效了就自己百度吧）打开软件是酱婶儿的。填进去你的ip然后open。</p><p><img src="/images/pasted-51.png" alt="upload successful"><br>然后用root账号登陆（注意login as 后面是填写用户名的，不是密码，先填用户名root回车再写密码，虽然好像很罗嗦，我之前也没想过这里也需要讲，但是真的有许多人卡在这一步），密码就是刚才记下的密码，输进去，敲回车。（注意这里可以直接把密码复制过去，但是一定注意第一不要复制到了空格，第二鼠标在putty里敲右键就是粘贴了，不要再ctrl+v，密码也是不会显示的，输进去直接回车就好）</p><p>进入命令行后，直接复制输入以下代码进行脚本安装。</p><pre><code>curl -O https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/trojan_centos7.sh &amp;&amp; chmod +x trojan_centos7.sh &amp;&amp; ./trojan_centos7.sh</code></pre><p>之后选1，回车，等待一下。过程中会提示需要输入域名，输入解析到本VPS的域名，然后回车。<br>等待之后，会出现安装完成的信息，是一个指向你域名下的一个下载链接，右键选中复制下来，然后粘贴进浏览器下载，下载下来是一个trojan-cil压缩包，解压点开文件夹下usr-&gt;src-&gt;trojan-cil-&gt;config.json，记下remote_addr, remote_addr, password三项。</p><p>到这时候，用任意一个浏览器输入你刚才注册的域名，应该就可以看到一个这样的网站（如果你到这看不到网页，就别往下做了，有两个原因，第一可能你买域名的时候解析地址填错了，第二，也是最大的可能性，这个ip的443端口已经被墙了，这时候就得去vultr重建一个vps了）。理解为它就是我们翻墙的掩护就好。</p><p><img src="/images/pasted-52.png" alt="upload successful"></p><p>之后回到我们的putty界面，输入下面的代码安装BBR加速，安了会让科学上网速度提升很多。</p><pre><code>cd /usr/src &amp;&amp; wget -N --no-check-certificate &quot;https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/tcp.sh&quot; &amp;&amp; chmod +x tcp.sh &amp;&amp; ./tcp.sh</code></pre><p>在弹出的界面选1，安装内核，安装完之后vps会重启，putty会断开连接，重启等待1到2分钟，在重复刚才的步骤用putty登陆vps，输入以下代码，在弹出的界面输入5，使用BBR。</p><pre><code>cd /usr/src &amp;&amp; ./tcp.sh</code></pre><p>之后显示BBR启动成功，这样我们服务端架设的步骤就完全完成了。</p><p><strong>这时候注意最好在命令行输入service v2ray start，确保v2ray起来了，因为有时会发生系统重启v2ray进程起不来，会发生伪装网站可以进但配好不好用的状况</strong></p><h1 id="客户端使用"><a href="#客户端使用" class="headerlink" title="客户端使用"></a>客户端使用</h1><h2 id="v2rayN-with-Trojan-for-window"><a href="#v2rayN-with-Trojan-for-window" class="headerlink" title="v2rayN-with-Trojan for window"></a>v2rayN-with-Trojan for window</h2><p>客户端下载地址：</p><pre><code>https://rachel.heartango.com/vtwowt.zip</code></pre><p>windows下现在体验最好的还是这个带Trojan版本的v2ray客户端。</p><ul><li>双击打开trojan文件夹下的 v2rayN.exe 文件</li><li>如客户端运行Trojan报错，请尝试下载以下软件，安装完毕再运行Trojan</li><li><a href="https://www.microsoft.com/zh-CN/download/details.aspx?id=48145" target="_blank" rel="noopener">isual C++ 2015 (x64、x86均安装)</a></li><li><a href="https://support.microsoft.com/zh-cn/help/3151800/the-net-framework-4-6-2-offline-installer-for-windows" target="_blank" rel="noopener">Windows.NET Framework 4.6.2</a></li><li>桌面右下角会出现1个小图标，再次双击，打开 Trojan 设置面板</li><li>点击「服务器」-「Add [Trojan] server」来添加Trojan节点</li></ul><p>打开v2rayN.exe,右下角出现如下小图标：</p><p><img src="/images/pasted-54.png" alt="upload successful"></p><p>双击左键点开，选择服务器，添加Trojan服务器。将之前在putty中记下的参数(地址，端口，密码)输入这里，然后点击确定。</p><p>之后就配置成功了，建议在配好的服务器上单击右键选择“批量导出分享URL至粘贴板”，然后在记事本中保存，之后会用在配置手机客户端里。</p><p>之后点右上角×关闭主界面，在右下角小图标单击右键。在服务器一栏勾选上已经配好的服务器，点击启用Http代理，代理模式选pac模式。之后就可以开心的科学上网了。提醒一下记得不用的时候，按顺序先把启用http代理勾选取消，之后退出客户端，最后关电脑。如果有没有按顺序操作，再次开机发现上不了网了，请在这里的小电脑点右键，打开“网络和Internet设置”→代理→手动设置代理，将使用代理服务器一栏关闭。</p><h2 id="Shadowrocket-for-ios"><a href="#Shadowrocket-for-ios" class="headerlink" title="Shadowrocket for ios"></a>Shadowrocket for ios</h2><p>新版本的Shadowrocket（简称小火箭）也支持Trojan的配置，虽然小火箭也要钱，不能在大陆App store下载，但是网上共享账号很多，大家可以多搜一搜，关键词“Shadowrocket/小火箭 ios 共享账号”。我这里提供两组账号，大家试一试，不保证好用，因为这种多人共享的账号很容易被苹果封了，账号时效性很强，不好用大家就自己找找了。</p><pre><code>app store账号：hadadreammm@gmail.com密码：As778899</code></pre><p>注意下完小火箭后一定马上把账号退了，换回自己的账号。</p><p>之后把刚才在电脑端导出的链接复制到手机里，在手机上直接复制，然后打开小火箭，小火箭就会自动识别到已经复制好的链接，将服务器添加进来，之后把最上面的链接打开就好了。（软件会要求使用手机vpn，请允许）</p><p><strong>若导出链接在小火箭里不好用，就在小火箭手动添加Trojan节点，输入地址，端口，密码，</strong></p><h2 id="Igniter-for-Android"><a href="#Igniter-for-Android" class="headerlink" title="Igniter for Android"></a>Igniter for Android</h2><pre><code>https://rachel.heartango.com/igniter-0.1.0-pre-alpha10.apk</code></pre><p>上面的安不了的话用下面这个，</p><pre><code>https://rachel.heartango.com/igniter-0.1.0-pre-alpha9.apk</code></pre><p>这个进去直接输入节点地址，端口，密码三项信息就可以了。</p><h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><h2 id="putty下载"><a href="#putty下载" class="headerlink" title="putty下载"></a>putty下载</h2><pre><code>https://rachel.heartango.com/putty-64bit-0.73-installer.msi</code></pre><p>看过我之前的文章的同学就知道我还是挺偷懒的，大部分内容都和之前的一样，这也说明Trojan和v2ray的使用方法实在是很像了。</p><p>上面的百度网盘链接不好用了就自己百度吧，挺好找的（可能也不是那么好找，真有困难再发邮件问我吧），实话说Trojan各种客户端可能还是不太稳，实在有困难的同学就还是用v2ray或者SSR吧。</p><p><a href="http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Vless+ws+tls科学上网梯子一键脚本教程</a></p><p><a href="http://luyiminggonnabeok.cn/2020/10/13/Naive-ws-tls%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Naive+ws+tls科学上网梯子搭建一键脚本教程</a></p><p><a href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">一键脚本配置V2ray科学上网梯子详细教程（包括vps，域名租用，客户端使用）</a></p><p><a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">十分钟搭建自己的科学上网SSR梯子</a></p><h1 id="vps其他玩法"><a href="#vps其他玩法" class="headerlink" title="vps其他玩法"></a>vps其他玩法</h1><p><a href="http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/">VPS快速搭建traccar手机GPS追踪服务器</a></p><h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="https://www.atrandys.com/2019/1963.html" target="_blank" rel="noopener">最简单的Trojan一键脚本，效率高/速度快/延迟低，支持tls1.3，系统要求&gt;=Centos7</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;先声明一下，题目写了自建VPN只是为了引流，毕竟现在大家一提科学上网还说vpn，但其实这些科学上网协议和vpn差别很大，可以说根本不是一回事，希望大家不要被我误导，想了解具体区别可以google或者学习一下TCP/IP知识。&lt;br&gt;先说在前面，之前
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="梯子" scheme="http://luyiminggonnabeok.cn/tags/%E6%A2%AF%E5%AD%90/"/>
+    
+      <category term="Trojan" scheme="http://luyiminggonnabeok.cn/tags/Trojan/"/>
+    
+      <category term="科学上网" scheme="http://luyiminggonnabeok.cn/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"/>
+    
+      <category term="一键脚本" scheme="http://luyiminggonnabeok.cn/tags/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用Hexo admin插件写博文上传图片无法显示问题的解决</title>
+    <link href="http://luyiminggonnabeok.cn/2019/11/14/%E4%BD%BF%E7%94%A8Hexo-admin%E6%8F%92%E4%BB%B6%E5%86%99%E5%8D%9A%E6%96%87%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BA%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3/"/>
+    <id>http://luyiminggonnabeok.cn/2019/11/14/%E4%BD%BF%E7%94%A8Hexo-admin%E6%8F%92%E4%BB%B6%E5%86%99%E5%8D%9A%E6%96%87%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BA%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3/</id>
+    <published>2019-11-14T06:16:00.000Z</published>
+    <updated>2020-05-04T11:36:49.514Z</updated>
+    
+    <content type="html"><![CDATA[<p>Hexo的admin插件是一款很方便的博文管理发布工具，但开始使用时图片的上传一直有问题，直接粘贴的图片部署后在博客中不能正常显示出现裂图，前期我也一直没研究，直接使用图床的外链来显示图片。</p><p>但最近不知道为什么用github和coding做图床，外链的图片也不能正常显示了，就又返回了研究在hexo admin中直接插图的办法。</p><p>最后研究出是因为在新版的hexo中，默认都集成了hexo-asset-image这个插件，这个插件管理图片是很整齐，默认每个博文的目录内都新建一个博文同名目录保存当前博文的图片，引用路径形如：</p><pre><code>![你想输入的替代文字](博文名称/图片名.jpg)</code></pre><p>但用admin插件上传的图片都默认保存在source/images目录下，引用也是这个目录，形如：</p><pre><code>![你想输入的替代文字](images/图片名.jpg)</code></pre><p>这就是问题所在，博客因为开了asset插件，希望从博文下的目录引图片，而admin上传的图都在images里，不能引用。</p><p>解决方法非常简单，就是在主页配置文件_config.yml里，把asset引用图片的选项关了就好。</p><pre><code>post_asset_folder:这个选项设置为false</code></pre><p>这样用admin传图片就正常了。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;Hexo的admin插件是一款很方便的博文管理发布工具，但开始使用时图片的上传一直有问题，直接粘贴的图片部署后在博客中不能正常显示出现裂图，前期我也一直没研究，直接使用图床的外链来显示图片。&lt;/p&gt;
+&lt;p&gt;但最近不知道为什么用github和coding做图床，外链的图片也不
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="hexo" scheme="http://luyiminggonnabeok.cn/tags/hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一键脚本配置V2ray+WS+TLS+Web科学上网梯子详细教程</title>
+    <link href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/"/>
+    <id>http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/</id>
+    <published>2019-10-18T07:53:00.000Z</published>
+    <updated>2020-11-21T15:10:19.359Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>一年多前写了<a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">一篇脚本搭建SSR梯子的教程</a>，比较简陋粗糙，而且其实写那篇教程的时候自己已经不用SSR了，主要是容易被识别然后被封ip，还是不太方便。最近一年多一直使用v2ray+tls+ws的方法科学上网，还是比较稳定，速度也不慢于SSR。最早使用的时候没有脚本，自己用apache做https的服务器做转发，配起来还是有些麻烦，之后Atrandy写了一键脚本，就方便多了，<a href="https://www.atrandys.com/" target="_blank" rel="noopener">Atrandy的博客</a>好像已经被墙了，今天主要参考他的博客，搬运一下，从域名注册开始写一个简单教程。</p></blockquote><h1 id="V2ray-tls-ws介绍"><a href="#V2ray-tls-ws介绍" class="headerlink" title="V2ray+tls+ws介绍"></a>V2ray+tls+ws介绍</h1><p>简要地说就是可以把你的科学上网行为变成正常的访问https网页，使得GFW很难得知你看起来是在正常上网其实是在科学上网，由于https使用TLS加密，所以与服务端的内容理论上是不可被解密的，既保证了数据安全又保证了行为安全。好吧说的可能不清晰，可以参考<a href="http://luyiminggonnabeok.cn/2018/11/14/Vmess-WebSocket-TLS-web%E9%85%8D%E7%BD%AE/">之前写的一篇文章</a>,也可以参考<a href="https://guide.v2fly.org/advanced/wss_and_web.html" target="_blank" rel="noopener">v2ray的通俗版教程</a>。</p><h1 id="购买VPS"><a href="#购买VPS" class="headerlink" title="购买VPS"></a>购买VPS</h1><p>虽然是一键脚本，但是使用脚本的前提还是你有个vps，和一个解析到vps的域名，首先来讲一下购买vps，现在可以购买vps的云平台很多，之前用的digitalocean,最主要的原因是因为可以随时删除重建服务器，等于可以随时更换被墙的ip。后来用<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">Vultr</a>了，因为发现除了和DO一样可以随时换ip，重点是还有日本的节点，而且支持支付宝，大陆使用日本的节点可以说速度飞快了。</p><p>首先注册vultr账号：<strong><a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr注册</a></strong></p><p>注册好第一次进去会提示让你完善信息，首次最少充值10刀，之后进入控制台界面，点击products，然后点右上角的加号添加server</p><p><img src="/images/pasted-41.png" alt="upload successful"></p><p>如图配置，server选哪里的都可以，但是强烈建议选韩国或者日本的，真的比其他地方的快好多。。</p><p><img src="/images/pasted-42.png" alt="upload successful"></p><p>这里要注意了，默认系统是Centos8(Centos都出8了。。今天第一次发现), 脚本是Centos7环境下的，所以这里一定要选Centos7，之后配置选5刀的就可以，科学上网足够用了<strong>注意系统选without SElinux版本的，不然可能会有问题</strong>。</p><p><img src="/images/pasted-43.png" alt="upload successful"></p><p>选好了就可以deploy now了，之后会自动跳转到products节目，这时候你的server是installing的状态，等大概一分钟，就会running。</p><p>之后点右边的三个点（server刚起来也可能是叫manage，反正就是最右边的）进入server detail。（如果之后哪天ip真的被封了，也可以在这里点destroy然后重新建一个）</p><p><img src="/images/pasted-44.png" alt="upload successful"></p><p>这里是你的server的一些详细信息，<strong>记住你的ip address和password</strong>，密码需要点那个小眼睛才能看到。（大家可以看见这里月流量是1000G，我这个4个人用了大半个月也就用了100多G，所以5刀的流量足够了）</p><p><img src="/images/pasted-45.png" alt="upload successful"></p><p>到这里vps就做好了，进入下一步购买域名。</p><h1 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h1><p>买域名的地方也很多，国内主要是腾讯云和阿里云，域名不需要在国外供应商买，哪里买都一样。腾讯阿里都有新人优惠，第一次购买域名，像.club, .xyz之类的小众域名基本只要1块一年，很便宜了。我用的是腾讯云，这里也以腾讯云为例，其他平台的流程也基本一致。</p><p>首先进入<a href="https://cloud.tencent.com/" target="_blank" rel="noopener">腾讯云主页</a>, 先点右上角的免费注册，注册登陆之后再产品这里选域名注册，热门里就有。</p><p><img src="/images/pasted-46.png" alt="upload successful"></p><p>之后可以直接搜自己想要的域名，也可以直接点下面的1元域名优惠抢，首次注册都可以1块钱购买一年。（这里就不放图了，都是中文，应该很好操作了）</p><p>购买之后点右上角进入控制台，搜索云解析，进入这样一个界面。点击你自己的域名，或者点击右边域名对应的解析。（可以看到这里腾讯要求在国内开展网站需要备案，我们其实也相当于建立了一个网站，但是我的经验因为我们用国外的服务器所以不备案也没关系。）<br><img src="/images/pasted-48.png" alt="upload successful"></p><p>之后直接点击快速添加网站/邮箱解析，选择网站解析。之后输入刚才购买的vps的ip地址就好了，解析大概需要十分钟以内。</p><p><img src="/images/pasted-50.png" alt="upload successful"></p><p>到这里域名购买解析部分就结束了，可以进行下一步，也是核心的一步，在vps上用脚本安装v2ray。</p><h1 id="脚本安装v2ray服务端"><a href="#脚本安装v2ray服务端" class="headerlink" title="脚本安装v2ray服务端"></a>脚本安装v2ray服务端</h1><p>首先下载一个ssh软件，比如putty，（我会放软件包度盘链接在下面，如果失效了就自己百度吧）打开软件是酱婶儿的。填进去你的ip然后open。</p><p><img src="/images/pasted-51.png" alt="upload successful"><br>然后用root账号登陆（注意login as 后面是填写用户名的，不是密码，先填用户名root回车再写密码，虽然好像很罗嗦，我之前也没想过这里也需要讲，但是真的有许多人卡在这一步），密码就是刚才记下的密码，输进去，敲回车。（注意这里可以直接把密码复制过去，但是一定注意第一不要复制到了空格，第二鼠标在putty里敲右键就是黏贴了，不要再ctrl+v，密码也是不会显示的，输进去直接回车就好）</p><p>进入命令行后，直接复制输入以下代码进行脚本安装。</p><pre><code>curl -O https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/v2ray_ws_tls.sh &amp;&amp; chmod +x v2ray_ws_tls.sh &amp;&amp; ./v2ray_ws_tls.sh</code></pre><p>之后选1，回车，因为脚本需要安装Nginx，比较慢，大概五六分钟，等待一下。过程中会提示需要输入域名，输入解析到本VPS的域名，然后回车。<br>漫长等待之后，会出现安装完成的信息，然后会有配置参数，这里需要记下来（复制下来，在putty里左键光标选中的字符就是已经被复制了，不用ctrl+c了）。</p><p>到这时候，用任意一个浏览器输入你刚才注册的域名，应该就可以看到一个这样的网站。理解为它就是我们翻墙的掩护就好。</p><p><img src="/images/pasted-52.png" alt="upload successful"></p><p>之后回到我们的putty界面，输入下面的代码安装BBR加速，安了会让科学上网速度提升很多。</p><pre><code>cd /usr/src &amp;&amp; wget -N --no-check-certificate &quot;https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/tcp.sh&quot; &amp;&amp; chmod +x tcp.sh &amp;&amp; ./tcp.sh</code></pre><p>在弹出的界面选1，安装内核，安装完之后vps会重启，putty会断开连接，重启等待1到2分钟，在重复刚才的步骤用putty登陆vps，输入以下代码，在弹出的界面输入5，使用BBR。</p><pre><code>cd /usr/src &amp;&amp; ./tcp.sh</code></pre><p>之后显示BBR启动成功，这样我们服务端架设的步骤就完全完成了。<br><strong>这时候注意最好在命令行输入service v2ray start，确保v2ray起来了，因为有时会发生系统重启v2ray进程起不来，会发生伪装网站可以进但配好不好用的状况</strong></p><h1 id="客户端使用"><a href="#客户端使用" class="headerlink" title="客户端使用"></a>客户端使用</h1><p>v2ray的客户端很多，这里主要介绍win，ios，安卓下最常用的三个客户端软件。</p><h2 id="v2rayN-for-Window"><a href="#v2rayN-for-Window" class="headerlink" title="v2rayN for Window"></a>v2rayN for Window</h2><pre><code>https://rachel.heartango.com/v2rayN-Core.zip</code></pre><p>下载下来解压点进去文件夹，打开v2rayN.exe,右下角出现如下小图标：</p><p><img src="/images/pasted-54.png" alt="upload successful"></p><p>双击左键点开，选择服务器，添加vmess服务器。将之前在putty中记下的参数输入这里，如下图，然后点击确定。注意这里路径这一栏在之前记录的参数基础上前面加上“/”。如图。<br><img src="/images/pasted-55.png" alt="upload successful"><br>之后就配置成功了，建议在配好的服务器上单击右键选择“批量导出分享URL至粘贴板”，然后在记事本中保存，之后会用在配置手机客户端里。</p><p>之后点右上角×关闭主界面，在右下角小图标单击右键。在服务器一栏勾选上已经配好的服务器，点击启用Http代理，代理模式选择全局模式。之后就可以开心的科学上网了。提醒一下记得不用的时候，按顺序先把启用http代理勾选取消，之后退出客户端，最后关电脑。如果有没有按顺序操作，再次开机发现上不了网了，请在这里的小电脑点右键，打开“网络和Internet设置”→代理→手动设置代理，将使用代理服务器一栏关闭。</p><h2 id="v2rayU-for-Mac"><a href="#v2rayU-for-Mac" class="headerlink" title="v2rayU for Mac"></a>v2rayU for Mac</h2><p>用法参考上面，逻辑差不多</p><pre><code>https://rachel.heartango.com/V2rayU.dmg</code></pre><h2 id="Shadowrocket-for-ios"><a href="#Shadowrocket-for-ios" class="headerlink" title="Shadowrocket for ios"></a>Shadowrocket for ios</h2><p>其实V2ray在ios上最好用的客户端是Kitsunebi，可是在大陆App store里下不到，国外也是收费的。新版本的Shadowrocket也支持Vmess+TLS+ws的配置，所以我就用了Shadowrocket（以下就代称小火箭了），虽然小火箭也要钱，不能在大陆App store下载，但是网上共享账号很多，大家可以多搜一搜，关键词“Shadowrocket/小火箭 ios 共享账号”。我这里提供一组账号，大家试一试，不保证好用，因为这种多人共享的账号很容易被苹果封了，账号时效性很强，不好用大家就自己找找了（可以去万能的淘宝找，七八块一个带小火箭的共享账户）。</p><pre><code>app store账号：hadadreammm@gmail.com密码：As778899</code></pre><p>注意下完小火箭后一定马上把账号退了，换回自己的账号。</p><p>之后把刚才在电脑端导出的，形如vmess://开头的链接复制到手机里，在手机上直接复制，然后打开小火箭，小火箭就会自动识别到已经复制好的链接，将服务器添加进来，之后把最上面的链接打开就好了。（软件会要求使用手机vpn，请允许）</p><h2 id="BifrostV-for-Android"><a href="#BifrostV-for-Android" class="headerlink" title="BifrostV for Android"></a>BifrostV for Android</h2><pre><code>https://rachel.heartango.com/BifrostV_v0.6.8_apkpure.com.apk</code></pre><p>使用方法和小火箭差不多，参考上面。</p><h1 id="几点注意及后记"><a href="#几点注意及后记" class="headerlink" title="几点注意及后记"></a>几点注意及后记</h1><ol><li>以上下载链接，账号等，不保证一直有效，失效的话请自己百度google一下解决，还是挺好找的。</li><li>如果过程中有什么问题，同样建议先自己搜索研究学习一下。</li><li>实在没弄明白，简单问题可以在下面留言向我提问，但是更建议理清思路发邮件联系我，邮箱地址可以在博客主页找（需要电脑端打开网页）。提问之前强烈建议先读这一篇文章<a href="https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/master/README-zh_CN.md" target="_blank" rel="noopener"><strong>提问的智慧</strong></a>。</li><li>我懂得也不多，这篇文章其实算是从别人的博客，使用手册之类的文字东拼西凑加一些基础的东西写成的，所以可能问我也没有什么效果。所以聪明的你也可以从下面的参考文献学习学习。</li></ol><p>之前有小伙伴在评论区说v2ray不行了，Trojan是主流，其实对我来说都挺好用的，既然小伙伴提要求了，我就又写了篇Trojan的教程，大家也可以试试。</p><p><a href="http://luyiminggonnabeok.cn/2019/12/07/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%90%AD%E5%BB%BATrojan%E6%A2%AF%E5%AD%90%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">一键脚本搭建Trojan科学上网梯子详细教程</a></p><p>谢谢大家。</p><p>两篇最新的协议。。</p><p><a href="http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Vless+ws+tls科学上网梯子一键脚本教程</a></p><p><a href="http://luyiminggonnabeok.cn/2020/10/13/Naive-ws-tls%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Naive+ws+tls科学上网梯子搭建一键脚本教程</a></p><h2 id="putty下载"><a href="#putty下载" class="headerlink" title="putty下载"></a>putty下载</h2><pre><code>https://rachel.heartango.com/putty-64bit-0.73-installer.msi</code></pre><h1 id="vps其他玩法"><a href="#vps其他玩法" class="headerlink" title="vps其他玩法"></a>vps其他玩法</h1><p><a href="http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/">VPS快速搭建traccar手机GPS追踪服务器</a></p><h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul><li><a href="https://www.atrandys.com/2019/1579.html" target="_blank" rel="noopener">最稳的上网方式：v2ray+ws+tls一键脚本（CentOS7版）by Atrandys</a></li><li><a href="https://www.v2ray.com/" target="_blank" rel="noopener">v2ray用户手册</a></li><li><a href="https://guide.v2fly.org/" target="_blank" rel="noopener">v2ray配置指南</a></li><li><a href="https://github.com/v2ray/v2ray-core" target="_blank" rel="noopener">v2ray项目地址</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;一年多前写了&lt;a href=&quot;http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="梯子" scheme="http://luyiminggonnabeok.cn/tags/%E6%A2%AF%E5%AD%90/"/>
+    
+      <category term="Vmess" scheme="http://luyiminggonnabeok.cn/tags/Vmess/"/>
+    
+      <category term="科学上网" scheme="http://luyiminggonnabeok.cn/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"/>
+    
+      <category term="一键脚本" scheme="http://luyiminggonnabeok.cn/tags/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Git 常用命令</title>
+    <link href="http://luyiminggonnabeok.cn/2019/07/30/Git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/"/>
+    <id>http://luyiminggonnabeok.cn/2019/07/30/Git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/</id>
+    <published>2019-07-30T06:07:00.000Z</published>
+    <updated>2020-05-04T11:36:46.961Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="基本创建"><a href="#基本创建" class="headerlink" title="基本创建"></a>基本创建</h3><ul><li>git init 创建版本库</li><li>git add filename 添加文件到stage</li><li>git commit -m “notes” 提交文件到仓库</li></ul><h3 id="回退撤销"><a href="#回退撤销" class="headerlink" title="回退撤销"></a>回退撤销</h3><ul><li>git log 查看提交历史</li><li>git reset –hard HEAD^/commit_id 版本回退</li><li>git reflog 命令记录</li><li>git checkout – filename 撤销工作区修改</li><li>git reset HEAD 撤销stage的修改到工作区</li><li>git rm filename 从版本库删除</li></ul><h3 id="连接远程库-Github"><a href="#连接远程库-Github" class="headerlink" title="连接远程库/Github"></a>连接远程库/Github</h3><ul><li><p>ssh-keygen -t rsa -C “<a href="mailto:youremail@example.com">youremail@example.com</a>“ 在家目录下创建.ssh目录，创建密钥<br>在.ssh下创建config文件，输入</p><pre><code>Host github.comUser YourEmail@163.comHostname ssh.github.comPreferredAuthentications publickeyIdentityFile ~/.ssh/id_rsaPort 443</code></pre><p>保存</p></li><li><p>git remote add origin git@server-name:path/repo-name.git 关联远程库（ssh连接）</p></li><li><p>git push -u origin master 第一次推送master分支</p></li><li><p>git push origin master 之后推送master分支</p></li><li><p>git clone git@server-name:path/repo-name.git 克隆远程库到本地</p></li></ul><h3 id="创建合并分支"><a href="#创建合并分支" class="headerlink" title="创建合并分支"></a>创建合并分支</h3><ul><li>git branch 查看分支</li><li>git branch <name> 创建分支</li><li>git checkout <name> 切换分支</li><li>git checkout -b <name> 创建，切换分支</li><li>git merge <name> 合并分支到当前</li><li>git branch -d <name> 删除分支</li><li>git branch -D <name> 强行删除分支</li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h3 id=&quot;基本创建&quot;&gt;&lt;a href=&quot;#基本创建&quot; class=&quot;headerlink&quot; title=&quot;基本创建&quot;&gt;&lt;/a&gt;基本创建&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;git init 创建版本库&lt;/li&gt;
+&lt;li&gt;git add filename 添加文件到stage&lt;/li&gt;
+      
+    
+    </summary>
+    
+    
+      <category term="命令记录" scheme="http://luyiminggonnabeok.cn/categories/%E5%91%BD%E4%BB%A4%E8%AE%B0%E5%BD%95/"/>
+    
+    
+      <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
+    
+      <category term="git" scheme="http://luyiminggonnabeok.cn/tags/git/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>醉日喃语</title>
+    <link href="http://luyiminggonnabeok.cn/2019/06/12/%E6%97%A5%E5%96%83%E8%AF%AD-2/"/>
+    <id>http://luyiminggonnabeok.cn/2019/06/12/%E6%97%A5%E5%96%83%E8%AF%AD-2/</id>
+    <published>2019-06-12T14:38:00.000Z</published>
+    <updated>2020-05-04T11:36:46.718Z</updated>
+    
+    <content type="html"><![CDATA[<p>半醉着。<br>  记得以前看过将记忆比为一个个抽屉的形容，意为每一块记忆是相互独立的，回忆时也需要先将其拉出来。<br>对于今晨刚从梦中惊醒的宿醉的我来说，记忆简直就位于深埋于泥泞沼泽下的古老的墓地里。泥泞中完全寻不到墓地的踪迹，真需要回忆，也需艰难的抛出泥泞，掘起已封棺入土多年的棺椁。<br>  睁开眼第一件事是摸手机，手机已经没电关机了，赶紧爬起来充上电，怕昨晚喝多了以后没有联系对象，让她担心。焦急的等待两分钟后，开机了，打开微信，发现昨夜已经给对象说了一连串晚安，喝多了睡了，还挺啰嗦的，心放下了一半。回过神来发现酒后的记忆大多都消失了，躺下继续深挖泥泞。<br>  接下来就是想是不是出糗了，不出所料，打开教研室群里发现我在半夜发了三段大段语音，不忍听了，没打开，直接问同门我说了啥。同门哈哈笑，说我语音里在教育他们好好学习。真是羞愧难当，我一向觉得对平辈，甚至与自己不怎么相干的晚辈说教很没有礼貌，跟别提酒后了，说我还和师弟辩论历史，最后开始说英语，真是不忍想象，这些画面组合在一起就是一副油腻中年的完整画像。<br>  小时候姥爷把我带大，我和姥爷感情很深，姥爷为人和蔼开明，对人非常好，也很有智慧。姥爷不抽烟，唯一的缺点就是嗜酒，且酒风不佳，我的童年甚至到青年，大部分可怖的记忆都是有关姥爷醉酒后和姥姥吵架而我在一边哭，遂从小就讨厌喝酒特别是喝醉且话多的行为。<br>  直到我长大开始喝酒，喝醉。<br>  有句很中二的话是我们终将活成我们曾经讨厌的样子。我一直以来并不以为然，一度发誓不会像姥爷那样喝酒，且常常对外宣称我厌恶酒局，但事实向我证明，至少在喝酒这一方面，我在走向我曾经讨厌的样子。<br>  挖尽了泥泞，挖到了墓地，回忆继续向前延展，越过了酒局，越过了毕业论文，来到了北山与西山，伯川与令希，来到了生活了七年的这片校园。也许是从本科到研究生到工作，我从来没真正离开这里，也可能是感情淡薄，我从没有在毕业季轰轰烈烈痛哭流涕的与大家分离，总是平淡的收拾行装，从容的走，觉着告别不需要什么仪式。后来才意识到，自己的情感并不是线性稳态的蔓延，而是有滞后的，瞬态且跳跃的。滞后体现在，过了一段时间后才发觉，校园还在这里，校园里的人已经不一样了，很多从前几乎天天见面的人，其实昨天那一眼已经是最后一面，而最后一句话已经早已忘记讲了什么，希望是一个比较好笑的笑话吧。瞬态跳跃表现在，这种思考和情感并不是持续存在的，而可能是在某个瞬间突然产生，比如再次听到了笑话，依然觉得好笑，却并非出自同一人之口了。离别与相遇往往伴随着失去与得到，这些离别带给了自己什么呢？这样思考时，手里熟练的点起一只烟放在嘴边，哈，看来这些年不管得到失去了什么，这个是学的挺熟，也不至徒增马齿。<br>  挖至棺椁，打开，记忆越过了大工，越过了大海，越过了3000公里的山川平原，来到一个干燥炎热的夏日午后，来到另一片不大的校园，两个中学生大口吃着西瓜。“哎，我觉得我的未来一片光明哎。”他说，“我觉得我也是。”<br>醒了。  </p><p><img src="/images/pasted-34.png" alt="upload successful"></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;半醉着。&lt;br&gt;  记得以前看过将记忆比为一个个抽屉的形容，意为每一块记忆是相互独立的，回忆时也需要先将其拉出来。&lt;br&gt;对于今晨刚从梦中惊醒的宿醉的我来说，记忆简直就位于深埋于泥泞沼泽下的古老的墓地里。泥泞中完全寻不到墓地的踪迹，真需要回忆，也需艰难的抛出泥泞，掘起已封棺
+      
+    
+    </summary>
+    
+    
+      <category term="日常" scheme="http://luyiminggonnabeok.cn/categories/%E6%97%A5%E5%B8%B8/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>通信基础概念学习笔记（一）</title>
+    <link href="http://luyiminggonnabeok.cn/2018/12/10/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/"/>
+    <id>http://luyiminggonnabeok.cn/2018/12/10/%E9%80%9A%E4%BF%A1%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</id>
+    <published>2018-12-10T05:46:00.000Z</published>
+    <updated>2020-05-04T11:36:45.809Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><blockquote><p>发现自己还是对一些基础的概念模糊不清，边学边查边记吧。</p></blockquote></blockquote><ul><li><p><strong>Trunk</strong>（中继线）：连接终端用户（如企事业单位、家庭〕的交换机、集团电话(含具有交换功能的电话连接器)、或普通电话机等与电信运营商(网通、电信等〕的市话交换机的电话线路多统称为中继线。<br>无论单位总机内部有几十门(至几百门)分机，但外线也只要几条(至几十条)。客户呼入时，只要拨通一对外公布的“引示号”，电话就会遇忙跳转到下一根电信直线，在客户端来说，不会出现听到忙音的情况。在使用中继线的情况下，您其它号码也就不需要对外公布，大量减少了您户外广告媒体的版面占用，从而达到变相省钱的目的。<br>中继线又指一个号码里包含了多条线路，用户对外只需公布一个引示号，达到电话遇忙跳转下一个通道的功能。假如这部电话占线，来的电话就会自动滑向具备连选功能（通常也是中继线号码）的其它号码。如果第二部电话也占线，就会滑向第三条线路 ……实现可以让多个电话同时打进来，每个用户可以根据电话量大小及集团电话容量大小，来考虑申请中继线路的多少！简单来说，几条线捆成一起，一个号打多个分机。</p></li><li><p><strong>Media Gateways</strong>（媒体网关）：在相关标准（如H.248、MGCP等）中，媒体网关被定义为将一种网络中的媒体转换成另一种网络所要求的媒体格式的设备。媒体网关将各种媒体（话音、数据、传真、视频等）在电路交换网络（如PSTN）与分组网络（如IP网络）之间转送，它在不同媒体网络的相关实体之间提供相互通信的双向接口，媒体网关终结承载控制协议，含有承载终节点以及媒体操作设备（比如译码器、回声抵消器或话音发送器）。比如，媒体网关能够在电路交换网的承载通道和分组网的媒体流之间进行转换，可以处理音频、视频或T.120，也具备处理这三者任意组合的能力，并且能够进行全双工的媒体翻译，可以演示视频/音频消息，实现其他IVR功能，同时还可以进行媒体会议等。</p></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;发现自己还是对一些基础的概念模糊不清，边学边查边记吧。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Trunk&lt;/strong&gt;（中继线）：连接终端用户（如企事业
+      
+    
+    </summary>
+    
+    
+    
+      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
+    
+      <category term="notes" scheme="http://luyiminggonnabeok.cn/tags/notes/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>科学上网需求与目前稳定方式的介绍</title>
+    <link href="http://luyiminggonnabeok.cn/2018/11/14/Vmess-WebSocket-TLS-web%E9%85%8D%E7%BD%AE/"/>
+    <id>http://luyiminggonnabeok.cn/2018/11/14/Vmess-WebSocket-TLS-web%E9%85%8D%E7%BD%AE/</id>
+    <published>2018-11-14T09:36:00.000Z</published>
+    <updated>2020-05-04T11:36:49.003Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>本文主要根据作者实践，分享一下目前较为安全稳定的Vmess+TLS+Web上网方式的配置方法，用以替代已经可被the Wall较为准确识别的ssr，ss。</p></blockquote><p><strong>Vmess+ws+web详细教程可参考<a href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">一键脚本配置V2ray梯子详细教程</a></strong></p><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>前段时间ssr也变得不稳定了，平均一个ip用不到一周就会被blocked，经过和朋友的学习与讨论，发现Vmess+TLS+Web算是现今较为稳定的上网方式，简单配置后得以成功，经过一周多的测试，此方法现在来看比较稳定。</p><h1 id="科学上网三大需求"><a href="#科学上网三大需求" class="headerlink" title="科学上网三大需求"></a>科学上网三大需求</h1><p>在进行具体配置讲解之前，首先探讨一下我们的需求，我们为什么要科学上网？很显然，每个人的需求都是不同的，这就使得我们需要不同的解决方案来应对。大体上我们的需求有以下三种：</p><ul><li>开放网络连接，使得 A 和 B 可以间接地进行正常通信；（速度）</li><li>通信内容，双方身份不能被第三方知晓；（安全）</li><li>网络连接要稳定，不能间歇或永久地失效；（稳定）</li></ul><p>这三个需求在不同的人那里都有不同的优先级，比如对于速度的要求，如果是ISP的限制我们可以添加流量混淆来迷惑它，对于安全性要求高，我们可以使用安全的vpn或TOR这种P2P匿名网络（上过暗网的小伙伴肯定对它不陌生），但其缺点也是显著的，现在wall已经能够很容易的识别各种vpn协议和tor协议了，加之tor因为用了多级代理，速度实在是慢，显然专门是为了匿名设计的。</p><p>这篇文章主要针对的是第三个需求，就是稳定（利用TLS可以实现内容安全，但通信双方身份还是不能很好保密），用这种方法配置，协议基本不会被检测出来，因为我们实现的是完美的真实的https通信，不是伪装的https，不排除未来会有更先进智能的流量检测方式出现，识别出此种办法，但如今来看还是很稳的。当然因为加了web后相当于多了一层代理，速度还是不如直接用ss/ssr。但已经有文章指出通过随机森林算法检测ss的流量，可达到85%的检测精度，而且退一步想，wall或许根本不需要识别协议，一个用着奇怪tcp协议的大流量服务器ip，却完全没有http/https流量，本身就很值得怀疑了。</p><h1 id="SS协议与用Vmess-https的代理逻辑对比"><a href="#SS协议与用Vmess-https的代理逻辑对比" class="headerlink" title="SS协议与用Vmess+https的代理逻辑对比"></a>SS协议与用Vmess+https的代理逻辑对比</h1><p><img src="/images/pasted-31.png" alt="upload successful"></p><p><img src="/images/pasted-33.png" alt="upload successful"></p><p>可以看到，其实我们实现的就是在中间添加了一个反向代理，把后端的v2ray（用Vmess协议的软件）服务器端隐藏了起来，前端变成了真实的TLS流量（当然需要我们自己申请域名证书），前端可以是Apache或者Nginx，而WebSocket的功能就是提供了一个全双工的通道，让Web服务器和v2ray可以自由通信。</p><p>TLS的特性决定了这样的通信，内容是绝对不会被破解，除非私钥泄密，外人在怎么看，也只能看出来你在用浏览器上网，不可能解密到你的实际通信内容，也就不会知道你实际在翻墙。</p><h1 id="实现主要步骤"><a href="#实现主要步骤" class="headerlink" title="实现主要步骤"></a>实现主要步骤</h1><ol><li>购买域名</li><li>租用vps</li><li>域名解析到vps</li><li>配置证书</li><li>配置v2ray服务端</li><li>配置Apache/Nginx，设置代理</li><li>配置客户端</li></ol><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul><li><a href="https://www.v2ray.com/ui_client/ios.html#kitsunebi" target="_blank" rel="noopener">V2Ray 用户手册</a></li><li><a href="https://toutyrater.github.io/" target="_blank" rel="noopener">V2Ray 配置教程</a></li><li><a href="https://steemit.com/cn/@v2ray/47wumq" target="_blank" rel="noopener">适合自己的才是最好的</a></li><li><a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">VPS租用，设置（可以看前半段，ssr建议就不要用了）</a></li></ul>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;本文主要根据作者实践，分享一下目前较为安全稳定的Vmess+TLS+Web上网方式的配置方法，用以替代已经可被the Wall较为准确识别的ssr，ss。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Vmess+ws+web详细教程可
+      
+    
+    </summary>
+    
+    
+    
+      <category term="梯子" scheme="http://luyiminggonnabeok.cn/tags/%E6%A2%AF%E5%AD%90/"/>
+    
+      <category term="Vmess" scheme="http://luyiminggonnabeok.cn/tags/Vmess/"/>
+    
+      <category term="TLS" scheme="http://luyiminggonnabeok.cn/tags/TLS/"/>
+    
+      <category term="Apache" scheme="http://luyiminggonnabeok.cn/tags/Apache/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>调制解调器原理E1</title>
+    <link href="http://luyiminggonnabeok.cn/2018/10/25/%E8%B0%83%E5%88%B6%E8%A7%A3%E8%B0%83%E5%99%A8%E5%8E%9F%E7%90%86-E1/"/>
+    <id>http://luyiminggonnabeok.cn/2018/10/25/%E8%B0%83%E5%88%B6%E8%A7%A3%E8%B0%83%E5%99%A8%E5%8E%9F%E7%90%86-E1/</id>
+    <published>2018-10-25T08:07:00.000Z</published>
+    <updated>2020-05-04T11:36:49.636Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>本文为10.24日通信原理培训课后作业，内容包括调制解调器（Modem）原理与E1的内容。</p></blockquote><h1 id="调制解调器原理"><a href="#调制解调器原理" class="headerlink" title="调制解调器原理"></a>调制解调器原理</h1><h2 id="调制"><a href="#调制" class="headerlink" title="调制"></a>调制</h2><blockquote><p>用基带脉冲对载波波形某个参数进行控制， 形成适合于线路传送的信号。</p></blockquote><p>也可把音频信号转换为较高频率的音频信号，从而进行频分多路复用，提高线路利用率。</p><h3 id="调制方法"><a href="#调制方法" class="headerlink" title="调制方法"></a>调制方法</h3><ol><li><p>振幅调制ASK（幅移键控）<br>调幅制，频率相位不变，用数字的基带信号控制载波的振幅，每一种振幅代表每一种信息源。<br>ASK易受突变干扰影响，1200bit/s</p></li><li><p>频率调制FSK（频移键控）<br>调频制，振幅相位不变，用数字的基带信号控制载波的频率，每一种频率代表每一种信息源。<br>抗干扰优于ASK。</p></li><li><p>相位调制PSK（相移键控）<br>调相制，用数字的基带信号控制载波的相位，每一种相位值代表每一种信息源。9600bit/s。</p></li></ol><h3 id="Modem传输协议"><a href="#Modem传输协议" class="headerlink" title="Modem传输协议"></a>Modem传输协议</h3><p>包括调制协议，差错控制协议，数据压缩协议，文件传输协议。</p><h2 id="解调"><a href="#解调" class="headerlink" title="解调"></a>解调</h2><blockquote><p>经过调制后的模拟信号去掉载波恢复为基带数字信号。</p></blockquote><h2 id="Modem种类"><a href="#Modem种类" class="headerlink" title="Modem种类"></a>Modem种类</h2><p>有线电视Modem，ADSLmodem，光纤modem，智能手机手机。</p><h2 id="一点问题"><a href="#一点问题" class="headerlink" title="一点问题"></a>一点问题</h2><p>是否所有需要进行信息传输的数字通信设备都需要调制解调器。</p><h1 id="E1简介"><a href="#E1简介" class="headerlink" title="E1简介"></a>E1简介</h1><p>E1的一个时分复用帧共划分32个time slots，编号为TS0-TS31。TS0作为帧同步用，主要用于传送帧定位信号（FAS）、CRC-4（循环冗余校验）和对端告警指示，TS16用来传送信令，随路信令 （CAS）、复帧定 位信号和复帧对端告警指示，剩下TS1<del>TS15和TS17</del>TS31 共30个时隙用作30个话路。每个时隙传送8bit，因此共用256bit。成复帧时，16个帧组成一个复帧。  </p><p>256bitx8k/s=2.048Mbit/s  </p><p>E1有成帧,成复帧与不成帧三种方式,在成帧的E1中第0时隙用于传输帧同步数据,其余31个时隙可以用于传输有效数据;</p><p>在成复帧的E1中,除了第0时隙外,第16时隙是用于传输信令的,只有第1到15,第17到第31共30个时隙可用于传输有效数据;</p><p>而在不成帧的E1中,所有32个时隙都可用于传输有效数据。 </p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;本文为10.24日通信原理培训课后作业，内容包括调制解调器（Modem）原理与E1的内容。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;调制解调器原理&quot;&gt;&lt;a href=&quot;#调制解调器原理&quot; class=&quot;headerlink&quot; title
+      
+    
+    </summary>
+    
+    
+    
+      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
+    
+      <category term="通信原理" scheme="http://luyiminggonnabeok.cn/tags/%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>通过mod_jk实现apache与tomcat整合</title>
+    <link href="http://luyiminggonnabeok.cn/2018/08/30/%E9%80%9A%E8%BF%87mod-jk%E5%AE%9E%E7%8E%B0apache%E4%B8%8Etomcat%E6%95%B4%E5%90%88/"/>
+    <id>http://luyiminggonnabeok.cn/2018/08/30/%E9%80%9A%E8%BF%87mod-jk%E5%AE%9E%E7%8E%B0apache%E4%B8%8Etomcat%E6%95%B4%E5%90%88/</id>
+    <published>2018-08-30T11:47:00.000Z</published>
+    <updated>2020-05-04T11:36:48.040Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>本文主要描述如何通过mod_jk作为代理工具将apache的httpd与tomcat整合。</p></blockquote><p>实现httpd到tomcat的反向代理的方法有两种，一种是利用mod_proxy,添加virtual host字段，另一种就是运用mod_jk，本文主要探讨通过mod_jk实现的反向代理。</p><h2 id="mod-jk与proxy的差异"><a href="#mod-jk与proxy的差异" class="headerlink" title="mod_jk与proxy的差异"></a>mod_jk与proxy的差异</h2><p>mod_proxy是运用http进行反向代理，mod_jk是通过ajp协议进行，http协议tcp只保持短时间连接要经常进行tcp三次握手四次挥手，ajp协议tcp保持长时间连接反向代理开销就比较小。</p><h2 id="mod-jk安装"><a href="#mod-jk安装" class="headerlink" title="mod_jk安装"></a>mod_jk安装</h2><p>首先确认apache与tomcat都已经安装完成，然后进行mod_jk的安装。</p><pre><code>yum install httpd-devel -y    #编译生成apache扩展依赖apxs，如未安装先安装wget http://mirrors.hust.edu.cn/apache/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.42-src.tar.gztar -zxf tomcat-connectors-1.2.42-src.tar.gzcd tomcat-connectors-1.2.42-src/native/./configure --with-apxs=/usr/sbin/apxsmakecp ./apache-2.0/mod_jk.so /etc/httpd/modules/</code></pre><p>最后一步是把编译好的mod_jk.so拷贝到自己httpd的modules目录下。</p><h2 id="mod-jk配置"><a href="#mod-jk配置" class="headerlink" title="mod_jk配置"></a>mod_jk配置</h2><p>mod加载好之后，可以在httpd.conf里直接配置，也可以在其中Include其他的conf文件，这里我们就直接把配置添加在httpd.conf里。</p><pre><code>LoadModule jk_module modules/mod_jk.so&lt;IfModule jk_module&gt;    JkWorkersFile conf/workers.properties    JkLogFile logs/mod_jk.log    JkLogLevel info    JkMount /examples/* tomcat1    JkMount /servlet/* tomcat1    JkMount /sample/*.jsp tomcat1    JkMount /sample/* tomcat1    JkMount /sample/hello/* tomcat1    JkMount /sample/hello/.jsp tomcat1    JkMount /*.jsp tomcat1    JkMount /*.do tomcat1&lt;/IfModule&gt;</code></pre><p>上面的字段表示，首先，我们要写一个workers.properties来指明worker的配置文件，JkLogLevel表示日志记录级别，可以选info，warn，debug。JkMount指明了哪些目录下的文件需要被哪个tomcat转发。也可以另写文件如uriworkermap.properties配置Mount。</p><p>之后我们要写workers.properties文件，用来配置不同的workers。</p><pre><code>workers.tomcat_home=/usr/local/tomcatworker.list=tomcat1worker.tomcat1.type=ajp13worker.tomcat1.host=localhostworker.tomcat1.port=8009</code></pre><p>最后在tomcat中配置jvmRoute,与workers.properties中指名的worker对应。</p><pre><code>&lt;Engine name=&quot;Catalina&quot; defaultHost=&quot;localhost&quot; jvmRoute=&quot;tomcat1&quot;&gt;</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;本文主要描述如何通过mod_jk作为代理工具将apache的httpd与tomcat整合。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;实现httpd到tomcat的反向代理的方法有两种，一种是利用mod_proxy,添加virtual host字段
+      
+    
+    </summary>
+    
+    
+    
+      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
+    
+      <category term="apache" scheme="http://luyiminggonnabeok.cn/tags/apache/"/>
+    
+      <category term="tomcat" scheme="http://luyiminggonnabeok.cn/tags/tomcat/"/>
+    
+      <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
+    
+      <category term="mod_jk" scheme="http://luyiminggonnabeok.cn/tags/mod-jk/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Tomcat下webapps访问认证BASIC Authentication设置</title>
+    <link href="http://luyiminggonnabeok.cn/2018/08/26/cat%E4%B8%8Bweb%E8%AE%BF%E9%97%AE%E8%AE%A4%E8%AF%81%E8%AE%BE%E7%BD%AE/"/>
+    <id>http://luyiminggonnabeok.cn/2018/08/26/cat%E4%B8%8Bweb%E8%AE%BF%E9%97%AE%E8%AE%A4%E8%AF%81%E8%AE%BE%E7%BD%AE/</id>
+    <published>2018-08-26T13:18:00.000Z</published>
+    <updated>2020-05-04T11:36:49.636Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>今天主要练习了tomcat下访问认证的设置，也更深入一点的了解了tomcat-user.xml</p></blockquote><p>首先在$CATALINA_HOME/conf/tomcat-users.xml中添加用来登陆指定webapps的用户，如下</p><pre><code>&lt;tomcat-users&gt;    &lt;role rolename=&quot;tomcat&quot;/&gt;    &lt;role rolename=&quot;manager&quot;/&gt;    &lt;user username=&quot;tomcat&quot; password=&quot;tomcat&quot; roles=&quot;tomcat&quot;/&gt;    &lt;user username=&quot;manager&quot; password=&quot;manager&quot; roles=&quot;manager&quot;/&gt;&lt;/tomcat-users&gt;</code></pre><p>之后在需要添加登陆认证的webapps下修改其web.xml文件，这里以tomcat自带的examples为例，修改$CATALINA_HOME/webapps/examples/WEB-INF/web.xml，添加（修改）security-constraint字段，如下</p><pre><code>&lt;security-constraint&gt;  &lt;display-name&gt;Example Security Constraint&lt;/display-name&gt;  &lt;web-resource-collection&gt;     &lt;web-resource-name&gt;Protected Area&lt;/web-resource-name&gt;     &lt;url-pattern&gt;/*&lt;/url-pattern&gt;     &lt;http-method&gt;DELETE&lt;/http-method&gt;     &lt;http-method&gt;GET&lt;/http-method&gt;     &lt;http-method&gt;POST&lt;/http-method&gt;     &lt;http-method&gt;PUT&lt;/http-method&gt;  &lt;/web-resource-collection&gt;  &lt;auth-constraint&gt;     &lt;role-name&gt;tomcat&lt;/role-name&gt;     &lt;role-name&gt;manager&lt;/role-name&gt;  &lt;/auth-constraint&gt;&lt;/security-constraint&gt;</code></pre><p>其中url-pattern定义了需要保护的路径，http-method定义了需要保护的http methods（http methods共有九种，具体的定义我也还不是很清楚），role-name定义了可以访问的role-name，和tomcat-users.xml中对应。<br>之后写login-congif字段，这里用BASIC方式认证，还可以用form认证的方法，区别是BASIC认证是在http包头部加上了认证字段，而from认证是通过页面的方式进行，需要手动添加登陆页面，登陆失败页面等。</p><pre><code>&lt;login-config&gt;  &lt;auth-method&gt;BASIC&lt;/auth-method&gt;&lt;/login-config&gt;</code></pre><p>如果form认证，需要加上页面字段。</p><pre><code>&lt;login-config&gt;  &lt;auth-method&gt;BASIC&lt;/auth-method&gt;  &lt;realm-name&gt;Example Form-Based Authentication Area&lt;/realm-name&gt;  &lt;form-login-config&gt;    &lt;form-login-page&gt;/jsp/security/protected/login.jsp&lt;/form-login-page&gt;    &lt;form-error-page&gt;/jsp/security/protected/error.jsp&lt;/form-error-page&gt;  &lt;/form-login-config&gt;&lt;/login-config&gt;</code></pre><p>之后要再添加之前提及的security-role</p><pre><code>&lt;security-role&gt;  &lt;role-name&gt;manager&lt;/role-name&gt;&lt;/security-role&gt;&lt;security-role&gt;  &lt;role-name&gt;tomcat&lt;/role-name&gt;&lt;/security-role&gt;</code></pre>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;今天主要练习了tomcat下访问认证的设置，也更深入一点的了解了tomcat-user.xml&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;首先在$CATALINA_HOME/conf/tomcat-users.xml中添加用来登陆指定webapps
+      
+    
+    </summary>
+    
+    
+    
+      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
+    
+      <category term="apache" scheme="http://luyiminggonnabeok.cn/tags/apache/"/>
+    
+      <category term="tomcat" scheme="http://luyiminggonnabeok.cn/tags/tomcat/"/>
+    
+      <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Apache tomcat相关学习实践（ssl配置，tomcat-users.xml）</title>
+    <link href="http://luyiminggonnabeok.cn/2018/08/21/Apache-tomcat%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5%EF%BC%88ssl%E9%85%8D%E7%BD%AE%EF%BC%8C%EF%BC%89/"/>
+    <id>http://luyiminggonnabeok.cn/2018/08/21/Apache-tomcat%E7%9B%B8%E5%85%B3%E5%AD%A6%E4%B9%A0%E5%AE%9E%E8%B7%B5%EF%BC%88ssl%E9%85%8D%E7%BD%AE%EF%BC%8C%EF%BC%89/</id>
+    <published>2018-08-21T11:44:00.000Z</published>
+    <updated>2020-05-04T11:36:46.609Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>今天做了tomcat一些入门的培训，本文为培训后的作业练习。</p></blockquote><hr><h2 id="Tomcat下SSL配置（单向认证）"><a href="#Tomcat下SSL配置（单向认证）" class="headerlink" title="Tomcat下SSL配置（单向认证）"></a>Tomcat下SSL配置（单向认证）</h2><p>证书认证原理之前培训讲过，就不再重复，tomcat下有自带的证书工具keytool，命令写法和openssl有一些不一样，主要讲不一样的地方。</p><p>我们在httpd下用openssl制作证书，配置单项认证，主要需要两套证书及密钥：</p><ul><li>自签的CA证书root.crt</li><li>自签的CA证书颁发的服务器证书server.crt，以及私钥server.key</li></ul><p>在tomcat中，命令和逻辑不太相同，server的证书和私钥合起来为一个keystore，所以在openssl制作好签发的服务器证书server.crt后，进行如下操作，先通过server.crt导出.p12文件</p><pre><code>openssl pkcs12 -export -in /tmp/ca/server.crt -inkey /tmp/ca/server.key -out  /tmp/ca/server.p12 -name &quot;server&quot;根据命令提示，输入server.key密码，创建p12密码。</code></pre><p>然后制作server.keystore文件。</p><pre><code>keytool -importkeystore -v -srckeystore  /tmp/ca/server.p12 -srcstoretype pkcs12 -srcstorepass 123456 -destkeystore /tmp/ca/server.keystore -deststoretype jks -deststorepass 123456这里srcstorepass后面的123456为server.p12的密码deststorepass后的123456为keyStore的密码。</code></pre><p>之后在server.xml里配置一下</p><pre><code>&lt;Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot;          maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;          clientAuth=&quot;false&quot; sslProtocol=&quot;TLS&quot;          keystoreFile=&quot;/usr/local/tomcat/conf/2224.keystore&quot; keystorePass=&quot;lym1993512&quot;          truststoreFile=&quot;/usr/local/tomcat/conf/Luroot.truststore&quot; truststorePass=&quot;lym1993512&quot;  /&gt;</code></pre><p>上面是我的虚拟机里的SSL配置，有关SSL的配置的练习大概就是这些。</p><hr><h2 id="tomcat-users-xml文件配置"><a href="#tomcat-users-xml文件配置" class="headerlink" title="tomcat-users.xml文件配置"></a>tomcat-users.xml文件配置</h2><p>这个文件主要是用来配置tomcat manager，首先放一下我的tomcat-usrs.xml文件作为实例，给大家讲解。</p><pre><code>&lt;tomcat-usrs&gt;    &lt;role rolename=&quot;manager-gui&quot;/&gt;    &lt;role rolename=&quot;manager-script&quot;/&gt;    &lt;user username=&quot;luyiming&quot; password=&quot;lym1993512&quot; roles=&quot;manager-gui&quot;/&gt;    &lt;user username=&quot;both&quot; password=&quot;lym1993512&quot; roles=&quot;manager-script,manager-gui&quot;/&gt;    &lt;user username=&quot;ben&quot; password=&quot;lym1993512&quot; roles=&quot;manager-script&quot;/&gt;&lt;/tomcat-users&gt;</code></pre><p>配置中的role rolename是规定好的，有四个角色，分别为：  </p><ul><li>manager-gui：允许访问html接口(即URL路径为/manager/html/*)</li><li>manager-script：允许访问纯文本接口(即URL路径为/manager/text/*)</li><li>manager-jmx：允许访问JMX代理接口(即URL路径为/manager/jmxproxy/*)</li><li>manager-status：允许访问Tomcat只读状态页面(即URL路径为/manager/status/*)</li></ul><p>之后定义好username和password，我们就可以通过/manager页面进行管理操作了。</p><p>还有一点需要注意，tomcat7以后，安全机制要求只能默认本机访问tomecat manager，远程访问需要在/conf/Catalina/localhost下配置contest.xml文件，来允许指定ip可以访问manager页面。</p><pre><code>&lt;Context privileged=&quot;true&quot; antiResourceLocking=&quot;false&quot;     docBase=&quot;${catalina.home}/webapps/manager&quot;&gt;&lt;Valve className=&quot;org.apache.catalina.valves.RemoteAddrValve&quot; allow=&quot;^192.168.*$&quot; /&gt;&lt;/Context&gt;&lt;Context privileged=&quot;true&quot; antiResourceLocking=&quot;false&quot;     docBase=&quot;${catalina.home}/webapps/manager&quot;&gt;&lt;Valve className=&quot;org.apache.catalina.valves.RemoteAddrValve&quot; allow=&quot;^192.168.*$&quot; /&gt;&lt;/Context&gt;</code></pre><p>编写时可以使用正则表达式，来指定ip段。</p><hr>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;今天做了tomcat一些入门的培训，本文为培训后的作业练习。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;Tomcat下SSL配置（单向认证）&quot;&gt;&lt;a href=&quot;#Tomcat下SSL配置（单向认证）&quot; class=&quot;heade
+      
+    
+    </summary>
+    
+    
+      <category term="学习" scheme="http://luyiminggonnabeok.cn/categories/%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
+    
+      <category term="apache" scheme="http://luyiminggonnabeok.cn/tags/apache/"/>
+    
+      <category term="tomcat" scheme="http://luyiminggonnabeok.cn/tags/tomcat/"/>
+    
+      <category term="linux" scheme="http://luyiminggonnabeok.cn/tags/linux/"/>
+    
+      <category term="ssl" scheme="http://luyiminggonnabeok.cn/tags/ssl/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Linux下PHP的安装和配置</title>
+    <link href="http://luyiminggonnabeok.cn/2018/08/16/Linux%E4%B8%8BPHP%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/"/>
+    <id>http://luyiminggonnabeok.cn/2018/08/16/Linux%E4%B8%8BPHP%E7%9A%84%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE/</id>
+    <published>2018-08-16T07:13:00.000Z</published>
+    <updated>2020-05-04T11:36:47.604Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>本文主要为了配置apache+php的环境，安装php前需要apache和mysql支持，之前写了一篇在文章讲解安装mysql。</p></blockquote><hr><h2 id="安装php"><a href="#安装php" class="headerlink" title="安装php"></a>安装php</h2><p>首先准备mysql环境，<a href="http://luyiminggonnabeok.cn/2018/08/16/CentOS-7%E4%B8%8BMySQL%E5%AE%89%E8%A3%85/">CentOS 7下MySQL安装，启动</a></p><p>下载PHP包：<a href="http://www.php.net/downloads.php" target="_blank" rel="noopener">http://www.php.net/downloads.php</a></p><p>放在随意目录里解压,之后编译，安装</p><pre><code># tar -zxvf php-7.2.8.tar.gz# cd php-7.2.8# mkdir /usr/local/php# ./configure --prefix=/usr/local/php --with-apxs2=/usr/local/httpd/bin/apxs --with-config-file-path=/usr/local/lib --enable-track-vars --with-xml --with-mysql-dir=/usr/include/mysql/mysql.h --with-zlib-dir=/usr/lib</code></pre><p>其中–with-apxs2改成自己的apache路径,安装</p><pre><code># make&amp;&amp;make install</code></pre><p>完成之后，把配置php.ini-production改名拷贝到/usr/local/lib/php.ini</p><pre><code># cp php.ini-production /usr/local/lib/php.ini</code></pre><hr><h2 id="在Apache中配置php"><a href="#在Apache中配置php" class="headerlink" title="在Apache中配置php"></a>在Apache中配置php</h2><p>这时候打开http.conf文件，php mod应该已经添加上了</p><pre><code>LoadModule php7_module        modules/libphp7.so</code></pre><p>在以下字段</p><pre><code>AddType application/x-compress .ZAddType application/x-gzip .gz .tgz</code></pre><p>之下添加</p><pre><code>AddType application/x-httpd-php .phpAddType application/x-httpd-php-source .phps</code></pre><p>在DirectoryIndex增加index.php</p><pre><code>&lt;IfModule dir_module&gt;    DirectoryIndex index.html index.php&lt;/IfModule&gt;</code></pre><p>保存退出，在网站目录底下写一个.php页面</p><pre><code># vi info.php&lt;?phpphpinfo();?&gt;</code></pre><p>保存退出，重启http服务，打开localhost/info.php，可以看到介绍页面，说明成功了。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;本文主要为了配置apache+php的环境，安装php前需要apache和mysql支持，之前写了一篇在文章讲解安装mysql。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;安装php&quot;&gt;&lt;a href=&quot;#安装php&quot; clas
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
+    
+      <category term="apache" scheme="http://luyiminggonnabeok.cn/tags/apache/"/>
+    
+      <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
+    
+      <category term="php" scheme="http://luyiminggonnabeok.cn/tags/php/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CentOS 7下MySQL安装，启动</title>
+    <link href="http://luyiminggonnabeok.cn/2018/08/16/CentOS-7%E4%B8%8BMySQL%E5%AE%89%E8%A3%85/"/>
+    <id>http://luyiminggonnabeok.cn/2018/08/16/CentOS-7%E4%B8%8BMySQL%E5%AE%89%E8%A3%85/</id>
+    <published>2018-08-16T06:10:00.000Z</published>
+    <updated>2020-05-04T11:36:47.386Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>写本文主要是因为最近学习需要用到MySQL+Apache+PHP环境，安装MySQL的时候又遇到各种依赖的问题，写一篇文章记录CentOS7下MySQL的安装过程。</p></blockquote><p>首先官网下载mysql包，<a href="http://www.mysql.com/downloads/mysql/#downloads" target="_blank" rel="noopener">http://www.mysql.com/downloads/mysql/#downloads</a> 选择Red Hat Linux。下载然后rpm -ivh如下几个包</p><pre><code># rpm -ivh mysql-community-libs-8.0.12-1.el7.x86_64.rpm# rpm -ivh mysql-community-common-8.0.12-1.el7.x86_64.rpm# rpm -ivh mysql-community-client-8.0.12-1.el7.x86_64.rpm# rpm -ivh mysql-community-server-8.0.12-1.el7.x86_64.rpm# rpm -ivh mysql-community-devel-8.0.12-1.el7.x86_64.rpm</code></pre><p>注意按顺序安装，因为之间都存在依赖关系。安装libs的时候，可能会包以下错：</p><pre><code># rpm -ivh mysql-community-libs-8.0.12-1.el7.x86_64.rpmwarning: mysql-community-libs-8.0.12-1.el7.x86_64.rpm: Header V3 DSA/SHA1 Signature, key ID 5072e1f5: NOKEYerror: Failed dependencies:    mariadb-libs is obsoleted by mysql-community-libs-8.0.12-1.el7.x86_64</code></pre><p>这是由于centos 7默认使用的是mariadb数据库，会和mysql冲突，先卸载mariadb。</p><pre><code># rpm -qa | grep mariadbmariadb-libs-5.5.56-2.el7.x86_64mariadb-5.5.56-2.el7.x86_64#rpm -e mariadb-libs-5.5.56-2.el7.x86_64error: Failed dependencies:    libmysqlclient.so.18()(64bit) is needed by (installed) postfix-2:2.10.1-6.el7.x86_64    libmysqlclient.so.18(libmysqlclient_18)(64bit) is needed by (installed) postfix-2:2.10.1-6.el7.x86_64    mariadb-libs(x86-64) = 1:5.5.56-2.el7 is needed by (installed) mariadb-1:5.5.56-2.el7.x86_64</code></pre><p>还是有依赖性的东西，先卸载mariadb主包，Postfix是之前尝试做邮件服务器的东西，卸载postfix</p><pre><code># rpm -e mariadb-5.5.56-2.el7.x86_64# rpm -ef|grep postfixpostfix-2.10.1-6.el7.x86_64# rpm -e postfix-2.10.1-6.el7.x86_64</code></pre><p>接着按顺序安装mysql包就好。安好之后</p><pre><code># systemctl start mysqld.service</code></pre><p>查看mysql状态</p><pre><code># systemctl status mysqld.service● mysqld.service - MySQL ServerLoaded: loaded (/usr/lib/systemd/system/mysqld.service; enabled; vendor preset: disabled)Active: active (running) since Thu 2018-08-16 14:39:28 CST; 12s ago Docs: man:mysqld(8)       http://dev.mysql.com/doc/refman/en/using-systemd.htmlProcess: 4373 ExecStartPre=/usr/bin/mysqld_pre_systemd (code=exited, status=0/SUCCESS)Main PID: 4441 (mysqld)Status: &quot;SERVER_OPERATING&quot;CGroup: /system.slice/mysqld.service       └─4441 /usr/sbin/mysqldAug 16 14:38:43 Lu systemd[1]: Starting MySQL Server...Aug 16 14:39:28 Lu systemd[1]: Started MySQL Server.</code></pre><p>这样就完成了mysql安装。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;写本文主要是因为最近学习需要用到MySQL+Apache+PHP环境，安装MySQL的时候又遇到各种依赖的问题，写一篇文章记录CentOS7下MySQL的安装过程。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;首先官网下载mysql包，&lt;a href
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
+    
+      <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
+    
+      <category term="mysql" scheme="http://luyiminggonnabeok.cn/tags/mysql/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>APACHE几种功能的学习练习笔记</title>
+    <link href="http://luyiminggonnabeok.cn/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
+    <id>http://luyiminggonnabeok.cn/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
+    <published>2018-08-15T06:09:00.000Z</published>
+    <updated>2020-05-04T11:36:49.000Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>本文主要通过几个有关apache中httpd.conf文件设置的小练习，来熟悉一些基本的apache功能实现。</p></blockquote><hr><h2 id="Test1"><a href="#Test1" class="headerlink" title="Test1"></a>Test1</h2><blockquote><p>Deny the Deny the ip address to request some special page</p></blockquote><p>此功能的实现主要通过加入Order Allow，Deny顺序进行实现。有两种方式。</p><h3 id="方式一"><a href="#方式一" class="headerlink" title="方式一"></a>方式一</h3><p>在httpd.conf中加入一个Directory字段</p><pre><code>&lt;Directory /&gt;    Order Allow,Deny    Allow from all    Deny from xxx.xxx.xxx.xxx #阻止一个ip访问    Deny from xxx.xxx.xxx.xxx/xxx #阻止一个ip段访问&lt;/Directory&gt;</code></pre><p>这个字段表示，对于对本服务器所有的访问请求，先允许，后拒绝，允许的范围是所有，然后再拒绝特定字段ip，当然，我们还可以反着写，来实现只允许特定ip访问的功能，如下</p><pre><code>&lt;Directory /&gt;    Order Deny,Allow    Deny from all    Allow from xxx.xxx.xxx.xxx #允许一个ip访问    Allow from xxx.xxx.xxx.xxx/xxx #允许一个ip段访问&lt;/Directory&gt;</code></pre><p>上面就实现了先拒绝再允许指定ip的操作。</p><h3 id="方式二"><a href="#方式二" class="headerlink" title="方式二"></a>方式二</h3><p>如果服务器开了多个虚拟主机，也可以在VirtualHost字段添加Location字段实现这个功能，如下</p><pre><code>&lt;VirtualHost *:8000&gt;    DocumentRoot /usr/local/httpd/htdocs    DirectoryIndex 002.gif    ServerName localhost:8000    &lt;Location /&gt;        Order Allow,Deny        Allow from all        Deny from all    &lt;/Location&gt;&lt;/VirtualHost&gt;</code></pre><h3 id="禁止通过IP访问功能"><a href="#禁止通过IP访问功能" class="headerlink" title="禁止通过IP访问功能"></a>禁止通过IP访问功能</h3><p>通过以上练习，我们可以用虚拟主机加这个方法，实现禁止用户通过我们的IP访问我们的网站，而只能通过域名访问的功能。如下</p><pre><code>&lt;VirtualHost *:8000&gt;    ServerName localhost:8000    &lt;Location /&gt;        Order Allow,Deny        Allow from all        Deny from all    &lt;/Location&gt;&lt;/VirtualHost&gt;&lt;VirtualHost *:8000&gt;    DocumentRoot /usr/local/httpd/htdocs    DirectoryIndex 002.gif    ServerName www.mengze.wang:8000&lt;/VirtualHost&gt;</code></pre><p>如上，其实实现方法就是我们给一个网站添加了两个虚拟主机，一个servername用IP表示，一个用域名表示。我们先禁止了通过IP的虚拟主机的所有访问，然后不限制通过域名的访问，就达到了这个目的。</p><hr><h2 id="Test-2"><a href="#Test-2" class="headerlink" title="Test 2"></a>Test 2</h2><blockquote><p>User authentication</p></blockquote><p>此功能主要通过apache自带的htpassed工具进行密码创建，然后通过指定目录下的AllowOverride设置来实现。</p><p>首先用htpassed工具创建账户密码，htpassed在bin目录下。</p><pre><code>#cd /usr/local/httpd/bin#./htpassed -bc /usr/local/httpd/mima/.mima1 ben lym1993512</code></pre><p>-b代表密码明文写在后米，不加b的话，命令后面不能直接接密码，输入命令之后会要求输入两遍密码。<br>-c代表新建密码文件，第一次建立需要，之后向其中添加账户就不需要。</p><p>然后编辑httpd.conf文件</p><pre><code>#vim $conf (为了方便我设置了环境变量conf=&quot;usr/local/httpd/conf/httpd.conf&quot;)&lt;Directory &quot;/usr/local/httpd/htdocs&quot;&gt;    Options Indexes FollowSymLinks    AllowOverride Authconfig    AuthType Basic    AuthName &quot;Enter your passwd&quot;    AuthUserFile /usr/local/httpd/mima/.mima1    Require user ben&lt;/Directory&gt;</code></pre><p>之后重启httpd服务就好用了，会提示输入用户名密码。</p><hr><h2 id="Test-3"><a href="#Test-3" class="headerlink" title="Test 3"></a>Test 3</h2><blockquote><p>Maps web paths into filesystem paths and is used to</p></blockquote><p>此功能主要通过aliasmod实现，在httpd.conf文件中打开相关mod，然后在需要指定别名的目录字段之前加上Alias字段即可。举例如下</p><pre><code>LoadModule alias_module modules/mod_alias.soAlias /readme &quot;/usr/local/httpd/htdocs/add&quot;&lt;Directory &quot;/usr/local/httpd/htdocs/add&quot;&gt;    Options Indexes MultiViews FollowSymLinks    AllowOverride None&lt;/Directory&gt;</code></pre><p>这样就可以在浏览器里直接通过hostname/readme访问服务器中/usr/local/httpd/htdocs/add目录下的内容。</p><hr><h2 id="proxy代理功能的实现"><a href="#proxy代理功能的实现" class="headerlink" title="proxy代理功能的实现"></a>proxy代理功能的实现</h2><blockquote><p>用多个域名直接访问服务器的多个端口</p></blockquote><p>这就是之前我自己琢磨做的一个小功能，有这个需求是因为我租了一个服务器和一个域名，域名解析到服务器IP，之后在上面搭建了一个博客。搭建博客我用的是一个叫hexo的专门用来做博客的软件，不是用httpd，博客搭建好后，用hexo监听80端口开启服务，在浏览器输入我租用的域名，就可以访问博客了。</p><p>之后我又租了两个域名，但是不知道做什么用，就想都解析到之前租用的服务器IP上，用httpd服务做两个小网站。</p><p>但是问题来了，在浏览器里输入域名，访问网站，默认都是访问80端口，但是我服务器的80端口已经被hexo软件占用，来访问博客了，其他的域名解析到我的服务器IP后，直接输入域名也只会访问到我的博客，不能到新的网站。</p><p>当然我可以在httpd里多开两个端口监听，比如5000，8000端口，然后新建两个VirtualHost对应到5000，8000端口，servername填我之后申请的两个域名，但是这样做的话，我每次在浏览器输入域名之后都要加上“:端口号”，这样很不方便。</p><p>或者就是关了hexo软件，把博客迁移到httpd里来，开三个VirtualHost，都对应到80端口，Servername填三个域名，对应不同的根目录，但是hexo还是很方便的，我不想关软件。</p><p>总之，我想要实现的是，在hexo软件不关闭的情况下，httpd服务也开启，三个域名分别能直接访问我的博客和其他两个网站。</p><p>实现的方法就是用Proxy代理功能。首先在httpd.conf里开启几个mod</p><pre><code>LoadModule proxy_module modules/mod_proxy.soLoadModule proxy_connect_module modules/mod_proxy_connect.soLoadModule proxy_http_module modules/mod_proxy_http.so</code></pre><p>然后监听三个端口</p><pre><code>Listen 80    #用来代理Listen 5000  #网站1端口Listen 8000  #网站2端口</code></pre><p>hexo服务我开了4000端口，作为博客访问的端口</p><pre><code>hexo s -p 4000</code></pre><p>然后新开两个VirtualHost作为新网站</p><pre><code>&lt;VirtualHost *:5000&gt;    DocumentRoot /usr/local/httpd/htdocs    DirectoryIndex 001.jpg    ServerName localhost:5000 #写localhost或者域名都可以，因为都解析到IP，下同&lt;/VirtualHost&gt;&lt;VirtualHost *:8000&gt;    DocumentRoot /usr/local/httpd/htdocs    DirectoryIndex 002.gif    ServerName www.mengze.wang:8000&lt;/VirtualHost&gt;</code></pre><p>然后加对应的代理VirtualHost</p><pre><code>&lt;VirtualHost *:80&gt;    ServerName  www.luyiminggonnabeok.cn #博客    ServerAlias www.luyiminggonnabeok.cn    ProxyPreserveHost On    ProxyRequests Off    ProxyPass / http://123.207.249.242:4000/    ProxyPassReverse / http://123.207.249.242:4000/&lt;/VirtualHost&gt;&lt;VirtualHost *:80&gt;    ServerName  www.zoeswan.wang #网站1    ServerAlias www.zoeswan.wang    ProxyPreserveHost On    ProxyRequests Off    ProxyPass / http://123.207.249.242:5000/    ProxyPassReverse / https://123.207.249.242:5000/&lt;/VirtualHost&gt;&lt;VirtualHost *:80&gt;    ServerName  www.mengze.wang #网站2    ServerAlias www.mengze.wang    ProxyPreserveHost On    ProxyRequests Off    ProxyPass / http://www.mengze.wang:8000/    ProxyPassReverse / http://mengze.wang:8000/&lt;/VirtualHost&gt;</code></pre><p>这样通过代理，就可以把同是80端口的请求转发到对应的不同端口上，实现了需求。</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;本文主要通过几个有关apache中httpd.conf文件设置的小练习，来熟悉一些基本的apache功能实现。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&quot;Test1&quot;&gt;&lt;a href=&quot;#Test1&quot; class=&quot;header
+      
+    
+    </summary>
+    
+    
+      <category term="学习" scheme="http://luyiminggonnabeok.cn/categories/%E5%AD%A6%E4%B9%A0/"/>
+    
+    
+      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
+    
+      <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
+    
+      <category term="httpd" scheme="http://luyiminggonnabeok.cn/tags/httpd/"/>
+    
+  </entry>
+  
+</feed>

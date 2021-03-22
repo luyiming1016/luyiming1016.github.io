@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link href="/lib/pace/pace-theme-minimal.min.css?v=1.0.2" rel="stylesheet">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/3232.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/3232.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/1616.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="梯子,Vmess,科学上网,一键脚本," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一年多前写了一篇脚本搭建SSR梯子的教程，比较简陋粗糙，而且其实写那篇教程的时候自己已经不用SSR了，主要是容易被识别然后被封ip，还是不太方便。最近一年多一直使用v2ray+tls+ws的方法科学上网，还是比较稳定，速度也不慢于SSR。最早使用的时候没有脚本，自己用apache做https的服务器做转发，配起来还是有些麻烦，之后Atrandy写了一键脚本，就方便多了，Atrandy的博客好像已">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一键脚本配置V2ray+WS+TLS+Web科学上网梯子详细教程">
+<meta property="og:url" content="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/index.html">
+<meta property="og:site_name" content="酉荻的博客">
+<meta property="og:description" content="一年多前写了一篇脚本搭建SSR梯子的教程，比较简陋粗糙，而且其实写那篇教程的时候自己已经不用SSR了，主要是容易被识别然后被封ip，还是不太方便。最近一年多一直使用v2ray+tls+ws的方法科学上网，还是比较稳定，速度也不慢于SSR。最早使用的时候没有脚本，自己用apache做https的服务器做转发，配起来还是有些麻烦，之后Atrandy写了一键脚本，就方便多了，Atrandy的博客好像已">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-41.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-42.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-43.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-44.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-45.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-46.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-48.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-50.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-51.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-52.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-54.png">
+<meta property="og:image" content="http://luyiminggonnabeok.cn/images/pasted-55.png">
+<meta property="article:published_time" content="2019-10-18T07:53:00.000Z">
+<meta property="article:modified_time" content="2020-11-21T15:10:19.359Z">
+<meta property="article:author" content="酉荻">
+<meta property="article:tag" content="梯子">
+<meta property="article:tag" content="Vmess">
+<meta property="article:tag" content="科学上网">
+<meta property="article:tag" content="一键脚本">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://luyiminggonnabeok.cn/images/pasted-41.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":true,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '1R70HHMBOU',
+      apiKey: '5c8731abbbc0c8e76f1248d7e0ab3967',
+      indexName: 'udyblog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"博客里搜一下吧","hits_empty":"不好意思没找到${query}","hits_stats":"找到${hits}篇符合的文章，用时${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://luyiminggonnabeok.cn/2019/10/18/一键脚本配置V2ray梯子教程/"/>
+
+
+
+
+
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  <script>
+  (function(i,s,o,g,r,a,m){i["DaoVoiceObject"]=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;a.charset="utf-8";m.parentNode.insertBefore(a,m)})(window,document,"script",('https:' == document.location.protocol ? 'https:' : 'http:') + "//widget.daovoice.io/widget/b40c9eb3.js","daovoice")
+  daovoice('init', {
+      app_id: "b40c9eb3"
+    });
+  daovoice('update');
+  </script>
+
+
+  <title>一键脚本配置V2ray+WS+TLS+Web科学上网梯子详细教程 | 酉荻的博客</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="酉荻的博客" type="application/atom+xml">
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">酉荻的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脱离高级趣味</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-主页">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            主页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-关于我">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于我
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-标签">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-目录">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            目录
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-归档">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="酉荻">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/touxiang.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="酉荻的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一键脚本配置V2ray+WS+TLS+Web科学上网梯子详细教程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-18T15:53:00+08:00">
+                2019-10-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%99%E7%A8%8B/" itemprop="url" rel="index">
+                    <span itemprop="name">教程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>一年多前写了<a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">一篇脚本搭建SSR梯子的教程</a>，比较简陋粗糙，而且其实写那篇教程的时候自己已经不用SSR了，主要是容易被识别然后被封ip，还是不太方便。最近一年多一直使用v2ray+tls+ws的方法科学上网，还是比较稳定，速度也不慢于SSR。最早使用的时候没有脚本，自己用apache做https的服务器做转发，配起来还是有些麻烦，之后Atrandy写了一键脚本，就方便多了，<a href="https://www.atrandys.com/" target="_blank" rel="noopener">Atrandy的博客</a>好像已经被墙了，今天主要参考他的博客，搬运一下，从域名注册开始写一个简单教程。</p>
+</blockquote>
+<h1 id="V2ray-tls-ws介绍"><a href="#V2ray-tls-ws介绍" class="headerlink" title="V2ray+tls+ws介绍"></a>V2ray+tls+ws介绍</h1><p>简要地说就是可以把你的科学上网行为变成正常的访问https网页，使得GFW很难得知你看起来是在正常上网其实是在科学上网，由于https使用TLS加密，所以与服务端的内容理论上是不可被解密的，既保证了数据安全又保证了行为安全。好吧说的可能不清晰，可以参考<a href="http://luyiminggonnabeok.cn/2018/11/14/Vmess-WebSocket-TLS-web%E9%85%8D%E7%BD%AE/">之前写的一篇文章</a>,也可以参考<a href="https://guide.v2fly.org/advanced/wss_and_web.html" target="_blank" rel="noopener">v2ray的通俗版教程</a>。</p>
+<h1 id="购买VPS"><a href="#购买VPS" class="headerlink" title="购买VPS"></a>购买VPS</h1><p>虽然是一键脚本，但是使用脚本的前提还是你有个vps，和一个解析到vps的域名，首先来讲一下购买vps，现在可以购买vps的云平台很多，之前用的digitalocean,最主要的原因是因为可以随时删除重建服务器，等于可以随时更换被墙的ip。后来用<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">Vultr</a>了，因为发现除了和DO一样可以随时换ip，重点是还有日本的节点，而且支持支付宝，大陆使用日本的节点可以说速度飞快了。</p>
+<p>首先注册vultr账号：<strong><a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr注册</a></strong></p>
+<p>注册好第一次进去会提示让你完善信息，首次最少充值10刀，之后进入控制台界面，点击products，然后点右上角的加号添加server</p>
+<p><img src="/images/pasted-41.png" alt="upload successful"></p>
+<p>如图配置，server选哪里的都可以，但是强烈建议选韩国或者日本的，真的比其他地方的快好多。。</p>
+<p><img src="/images/pasted-42.png" alt="upload successful"></p>
+<p>这里要注意了，默认系统是Centos8(Centos都出8了。。今天第一次发现), 脚本是Centos7环境下的，所以这里一定要选Centos7，之后配置选5刀的就可以，科学上网足够用了<strong>注意系统选without SElinux版本的，不然可能会有问题</strong>。</p>
+<p><img src="/images/pasted-43.png" alt="upload successful"></p>
+<p>选好了就可以deploy now了，之后会自动跳转到products节目，这时候你的server是installing的状态，等大概一分钟，就会running。</p>
+<p>之后点右边的三个点（server刚起来也可能是叫manage，反正就是最右边的）进入server detail。（如果之后哪天ip真的被封了，也可以在这里点destroy然后重新建一个）</p>
+<p><img src="/images/pasted-44.png" alt="upload successful"></p>
+<p>这里是你的server的一些详细信息，<strong>记住你的ip address和password</strong>，密码需要点那个小眼睛才能看到。（大家可以看见这里月流量是1000G，我这个4个人用了大半个月也就用了100多G，所以5刀的流量足够了）</p>
+<p><img src="/images/pasted-45.png" alt="upload successful"></p>
+<p>到这里vps就做好了，进入下一步购买域名。</p>
+<h1 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h1><p>买域名的地方也很多，国内主要是腾讯云和阿里云，域名不需要在国外供应商买，哪里买都一样。腾讯阿里都有新人优惠，第一次购买域名，像.club, .xyz之类的小众域名基本只要1块一年，很便宜了。我用的是腾讯云，这里也以腾讯云为例，其他平台的流程也基本一致。</p>
+<p>首先进入<a href="https://cloud.tencent.com/" target="_blank" rel="noopener">腾讯云主页</a>, 先点右上角的免费注册，注册登陆之后再产品这里选域名注册，热门里就有。</p>
+<p><img src="/images/pasted-46.png" alt="upload successful"></p>
+<p>之后可以直接搜自己想要的域名，也可以直接点下面的1元域名优惠抢，首次注册都可以1块钱购买一年。（这里就不放图了，都是中文，应该很好操作了）</p>
+<p>购买之后点右上角进入控制台，搜索云解析，进入这样一个界面。点击你自己的域名，或者点击右边域名对应的解析。（可以看到这里腾讯要求在国内开展网站需要备案，我们其实也相当于建立了一个网站，但是我的经验因为我们用国外的服务器所以不备案也没关系。）<br><img src="/images/pasted-48.png" alt="upload successful"></p>
+<p>之后直接点击快速添加网站/邮箱解析，选择网站解析。之后输入刚才购买的vps的ip地址就好了，解析大概需要十分钟以内。</p>
+<p><img src="/images/pasted-50.png" alt="upload successful"></p>
+<p>到这里域名购买解析部分就结束了，可以进行下一步，也是核心的一步，在vps上用脚本安装v2ray。</p>
+<h1 id="脚本安装v2ray服务端"><a href="#脚本安装v2ray服务端" class="headerlink" title="脚本安装v2ray服务端"></a>脚本安装v2ray服务端</h1><p>首先下载一个ssh软件，比如putty，（我会放软件包度盘链接在下面，如果失效了就自己百度吧）打开软件是酱婶儿的。填进去你的ip然后open。</p>
+<p><img src="/images/pasted-51.png" alt="upload successful"><br>然后用root账号登陆（注意login as 后面是填写用户名的，不是密码，先填用户名root回车再写密码，虽然好像很罗嗦，我之前也没想过这里也需要讲，但是真的有许多人卡在这一步），密码就是刚才记下的密码，输进去，敲回车。（注意这里可以直接把密码复制过去，但是一定注意第一不要复制到了空格，第二鼠标在putty里敲右键就是黏贴了，不要再ctrl+v，密码也是不会显示的，输进去直接回车就好）</p>
+<p>进入命令行后，直接复制输入以下代码进行脚本安装。</p>
+<pre><code>curl -O https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/v2ray_ws_tls.sh &amp;&amp; chmod +x v2ray_ws_tls.sh &amp;&amp; ./v2ray_ws_tls.sh</code></pre><p>之后选1，回车，因为脚本需要安装Nginx，比较慢，大概五六分钟，等待一下。过程中会提示需要输入域名，输入解析到本VPS的域名，然后回车。<br>漫长等待之后，会出现安装完成的信息，然后会有配置参数，这里需要记下来（复制下来，在putty里左键光标选中的字符就是已经被复制了，不用ctrl+c了）。</p>
+<p>到这时候，用任意一个浏览器输入你刚才注册的域名，应该就可以看到一个这样的网站。理解为它就是我们翻墙的掩护就好。</p>
+<p><img src="/images/pasted-52.png" alt="upload successful"></p>
+<p>之后回到我们的putty界面，输入下面的代码安装BBR加速，安了会让科学上网速度提升很多。</p>
+<pre><code>cd /usr/src &amp;&amp; wget -N --no-check-certificate &quot;https://raw.githubusercontent.com/luyiming1016/ladderbackup/master/tcp.sh&quot; &amp;&amp; chmod +x tcp.sh &amp;&amp; ./tcp.sh</code></pre><p>在弹出的界面选1，安装内核，安装完之后vps会重启，putty会断开连接，重启等待1到2分钟，在重复刚才的步骤用putty登陆vps，输入以下代码，在弹出的界面输入5，使用BBR。</p>
+<pre><code>cd /usr/src &amp;&amp; ./tcp.sh</code></pre><p>之后显示BBR启动成功，这样我们服务端架设的步骤就完全完成了。<br><strong>这时候注意最好在命令行输入service v2ray start，确保v2ray起来了，因为有时会发生系统重启v2ray进程起不来，会发生伪装网站可以进但配好不好用的状况</strong></p>
+<h1 id="客户端使用"><a href="#客户端使用" class="headerlink" title="客户端使用"></a>客户端使用</h1><p>v2ray的客户端很多，这里主要介绍win，ios，安卓下最常用的三个客户端软件。</p>
+<h2 id="v2rayN-for-Window"><a href="#v2rayN-for-Window" class="headerlink" title="v2rayN for Window"></a>v2rayN for Window</h2><pre><code>https://rachel.heartango.com/v2rayN-Core.zip</code></pre><p>下载下来解压点进去文件夹，打开v2rayN.exe,右下角出现如下小图标：</p>
+<p><img src="/images/pasted-54.png" alt="upload successful"></p>
+<p>双击左键点开，选择服务器，添加vmess服务器。将之前在putty中记下的参数输入这里，如下图，然后点击确定。注意这里路径这一栏在之前记录的参数基础上前面加上“/”。如图。<br><img src="/images/pasted-55.png" alt="upload successful"><br>之后就配置成功了，建议在配好的服务器上单击右键选择“批量导出分享URL至粘贴板”，然后在记事本中保存，之后会用在配置手机客户端里。</p>
+<p>之后点右上角×关闭主界面，在右下角小图标单击右键。在服务器一栏勾选上已经配好的服务器，点击启用Http代理，代理模式选择全局模式。之后就可以开心的科学上网了。提醒一下记得不用的时候，按顺序先把启用http代理勾选取消，之后退出客户端，最后关电脑。如果有没有按顺序操作，再次开机发现上不了网了，请在这里的小电脑点右键，打开“网络和Internet设置”→代理→手动设置代理，将使用代理服务器一栏关闭。</p>
+<h2 id="v2rayU-for-Mac"><a href="#v2rayU-for-Mac" class="headerlink" title="v2rayU for Mac"></a>v2rayU for Mac</h2><p>用法参考上面，逻辑差不多</p>
+<pre><code>https://rachel.heartango.com/V2rayU.dmg</code></pre><h2 id="Shadowrocket-for-ios"><a href="#Shadowrocket-for-ios" class="headerlink" title="Shadowrocket for ios"></a>Shadowrocket for ios</h2><p>其实V2ray在ios上最好用的客户端是Kitsunebi，可是在大陆App store里下不到，国外也是收费的。新版本的Shadowrocket也支持Vmess+TLS+ws的配置，所以我就用了Shadowrocket（以下就代称小火箭了），虽然小火箭也要钱，不能在大陆App store下载，但是网上共享账号很多，大家可以多搜一搜，关键词“Shadowrocket/小火箭 ios 共享账号”。我这里提供一组账号，大家试一试，不保证好用，因为这种多人共享的账号很容易被苹果封了，账号时效性很强，不好用大家就自己找找了（可以去万能的淘宝找，七八块一个带小火箭的共享账户）。</p>
+<pre><code>app store账号：hadadreammm@gmail.com
+密码：As778899</code></pre><p>注意下完小火箭后一定马上把账号退了，换回自己的账号。</p>
+<p>之后把刚才在电脑端导出的，形如vmess://开头的链接复制到手机里，在手机上直接复制，然后打开小火箭，小火箭就会自动识别到已经复制好的链接，将服务器添加进来，之后把最上面的链接打开就好了。（软件会要求使用手机vpn，请允许）</p>
+<h2 id="BifrostV-for-Android"><a href="#BifrostV-for-Android" class="headerlink" title="BifrostV for Android"></a>BifrostV for Android</h2><pre><code>https://rachel.heartango.com/BifrostV_v0.6.8_apkpure.com.apk</code></pre><p>使用方法和小火箭差不多，参考上面。</p>
+<h1 id="几点注意及后记"><a href="#几点注意及后记" class="headerlink" title="几点注意及后记"></a>几点注意及后记</h1><ol>
+<li>以上下载链接，账号等，不保证一直有效，失效的话请自己百度google一下解决，还是挺好找的。</li>
+<li>如果过程中有什么问题，同样建议先自己搜索研究学习一下。</li>
+<li>实在没弄明白，简单问题可以在下面留言向我提问，但是更建议理清思路发邮件联系我，邮箱地址可以在博客主页找（需要电脑端打开网页）。提问之前强烈建议先读这一篇文章<a href="https://github.com/ryanhanwu/How-To-Ask-Questions-The-Smart-Way/blob/master/README-zh_CN.md" target="_blank" rel="noopener"><strong>提问的智慧</strong></a>。</li>
+<li>我懂得也不多，这篇文章其实算是从别人的博客，使用手册之类的文字东拼西凑加一些基础的东西写成的，所以可能问我也没有什么效果。所以聪明的你也可以从下面的参考文献学习学习。</li>
+</ol>
+<p>之前有小伙伴在评论区说v2ray不行了，Trojan是主流，其实对我来说都挺好用的，既然小伙伴提要求了，我就又写了篇Trojan的教程，大家也可以试试。</p>
+<p><a href="http://luyiminggonnabeok.cn/2019/12/07/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%90%AD%E5%BB%BATrojan%E6%A2%AF%E5%AD%90%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">一键脚本搭建Trojan科学上网梯子详细教程</a></p>
+<p>谢谢大家。</p>
+<p>两篇最新的协议。。</p>
+<p><a href="http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Vless+ws+tls科学上网梯子一键脚本教程</a></p>
+<p><a href="http://luyiminggonnabeok.cn/2020/10/13/Naive-ws-tls%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Naive+ws+tls科学上网梯子搭建一键脚本教程</a></p>
+<h2 id="putty下载"><a href="#putty下载" class="headerlink" title="putty下载"></a>putty下载</h2><pre><code>https://rachel.heartango.com/putty-64bit-0.73-installer.msi</code></pre><h1 id="vps其他玩法"><a href="#vps其他玩法" class="headerlink" title="vps其他玩法"></a>vps其他玩法</h1><p><a href="http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/">VPS快速搭建traccar手机GPS追踪服务器</a></p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><ul>
+<li><a href="https://www.atrandys.com/2019/1579.html" target="_blank" rel="noopener">最稳的上网方式：v2ray+ws+tls一键脚本（CentOS7版）by Atrandys</a></li>
+<li><a href="https://www.v2ray.com/" target="_blank" rel="noopener">v2ray用户手册</a></li>
+<li><a href="https://guide.v2fly.org/" target="_blank" rel="noopener">v2ray配置指南</a></li>
+<li><a href="https://github.com/v2ray/v2ray-core" target="_blank" rel="noopener">v2ray项目地址</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%A2%AF%E5%AD%90/" rel="tag"># 梯子</a>
+          
+            <a href="/tags/Vmess/" rel="tag"># Vmess</a>
+          
+            <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag"># 科学上网</a>
+          
+            <a href="/tags/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC/" rel="tag"># 一键脚本</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/30/Git-%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="next" title="Git 常用命令">
+                <i class="fa fa-chevron-left"></i> Git 常用命令
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/11/14/%E4%BD%BF%E7%94%A8Hexo-admin%E6%8F%92%E4%BB%B6%E5%86%99%E5%8D%9A%E6%96%87%E4%B8%8A%E4%BC%A0%E5%9B%BE%E7%89%87%E6%97%A0%E6%B3%95%E6%98%BE%E7%A4%BA%E9%97%AE%E9%A2%98%E7%9A%84%E8%A7%A3%E5%86%B3/" rel="prev" title="使用Hexo admin插件写博文上传图片无法显示问题的解决">
+                使用Hexo admin插件写博文上传图片无法显示问题的解决 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/touxiang.gif"
+                alt="酉荻" />
+            
+              <p class="site-author-name" itemprop="name">酉荻</p>
+              <p class="site-description motion-element" itemprop="description">Always.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">37</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:luyiming1016@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#V2ray-tls-ws介绍"><span class="nav-number">1.</span> <span class="nav-text">V2ray+tls+ws介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#购买VPS"><span class="nav-number">2.</span> <span class="nav-text">购买VPS</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#购买域名"><span class="nav-number">3.</span> <span class="nav-text">购买域名</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#脚本安装v2ray服务端"><span class="nav-number">4.</span> <span class="nav-text">脚本安装v2ray服务端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#客户端使用"><span class="nav-number">5.</span> <span class="nav-text">客户端使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#v2rayN-for-Window"><span class="nav-number">5.1.</span> <span class="nav-text">v2rayN for Window</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#v2rayU-for-Mac"><span class="nav-number">5.2.</span> <span class="nav-text">v2rayU for Mac</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Shadowrocket-for-ios"><span class="nav-number">5.3.</span> <span class="nav-text">Shadowrocket for ios</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BifrostV-for-Android"><span class="nav-number">5.4.</span> <span class="nav-text">BifrostV for Android</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#几点注意及后记"><span class="nav-number">6.</span> <span class="nav-text">几点注意及后记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#putty下载"><span class="nav-number">6.1.</span> <span class="nav-text">putty下载</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#vps其他玩法"><span class="nav-number">7.</span> <span class="nav-text">vps其他玩法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-number">8.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+            <span id="scrollpercent"><span>0</span>%</span>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">酉荻</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <span id="busuanzi_container_site_pv">总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+    <span class="post-meta-divider">|</span>
+    <span id="busuanzi_container_site_uv">总访客<span id="busuanzi_value_site_uv"></span>人</span>
+    <span class="post-meta-divider">|</span>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine@1.3.10/dist/Valine.min.js"></script>
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: true,
+        notify: true,
+        appId: 'SfTyUdnrc6u7vQckktfMf2Wp-gzGzoHsz',
+        appKey: 'tBk0IQRdr9kGFInR4qoDRw9O',
+        placeholder: '欢迎评论',
+        avatar:'robohash',
+        guest_info:guest,
+        pageSize:'10' || 10,
+	avatar_cdn:'https://www.gravatar.com/avatar/',
+    });
+  </script>
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.4"></script>
+
+
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
