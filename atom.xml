@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://luyiminggonnabeok.cn/"/>
-  <updated>2021-03-22T11:34:56.771Z</updated>
+  <updated>2021-03-22T15:55:20.520Z</updated>
   <id>http://luyiminggonnabeok.cn/</id>
   
   <author>
@@ -15,6 +15,39 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Xray梯子搭建一键脚本，以及Qv2ray客户端配置使用教程</title>
+    <link href="http://luyiminggonnabeok.cn/2021/03/22/Xray%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%EF%BC%8C%E4%BB%A5%E5%8F%8AQv2ray%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/"/>
+    <id>http://luyiminggonnabeok.cn/2021/03/22/Xray%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%EF%BC%8C%E4%BB%A5%E5%8F%8AQv2ray%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</id>
+    <published>2021-03-22T12:05:00.000Z</published>
+    <updated>2021-03-22T15:55:20.520Z</updated>
+    
+    <content type="html"><![CDATA[<blockquote><p>又是后知后觉，最近才发现Xray，算是2020年底到2021年最新的科学上网协议。水一篇教程，顺便稍微讲解一下全协议全功能客户端Qv2ray的用法，确实比v2rayN好很多。</p></blockquote><h1 id="Xray简介"><a href="#Xray简介" class="headerlink" title="Xray简介"></a>Xray简介</h1><p>做出Vless的大佬rprx在20年11月底开发的新项目，简而言之是一个比Vless更牛逼的协议，最大的特点是具有完全的“回落”属性，再简而言之具备如下特点：</p><ul><li>安全： 充分抵御主动探测攻击</li><li>高效： 几乎毫无性能损失</li><li>灵活： 数据灵活分流、常用端口复用（如443）</li></ul><p>好了废话不多说，进入正题吧。</p><h1 id="购买VPS-和之前不同，注意使用Debian-9，不用Centos"><a href="#购买VPS-和之前不同，注意使用Debian-9，不用Centos" class="headerlink" title="购买VPS (和之前不同，注意使用Debian 9，不用Centos)"></a>购买VPS (和之前不同，注意使用Debian 9，不用Centos)</h1><p>照例第一步，直接照抄之前的文章了。</p><p>你还是得有个vps，我现在用的<a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr</a>，首要原因可以随时删除服务器重建服务器，以达到换ip的效果，其次这是我见过有韩国日本节点的最便宜的一家，搭配联通宽带真的是无敌了。然后就是可以支付宝付款，很方便了。</p><p>首先注册vultr账号：<strong><a href="https://www.vultr.com/?ref=8534836" target="_blank" rel="noopener">vultr注册</a></strong></p><p>注册好第一次进去会提示让你完善信息，首次使用之前需要充值最少10刀，之后进入控制台界面，点击products，然后点右上角的加号添加server。</p><p><img src="/images/pasted-41.png" alt="upload successful"></p><p>如图配置，server选哪里的都可以，但是强烈建议选韩国的，真的比其他地方ping值低很多。</p><p><img src="/images/pasted-42.png" alt="upload successful"></p><p>这里要注意了，默认系统是Centos8，<strong>注意这里一定换成旁边的Debian 9，不然证书申请会出问题</strong></p><p><img src="/images/pasted-118.png" alt="upload successful"></p><p>选好了就可以deploy now了，之后会自动跳转到products节目，这时候你的server是installing的状态，等大概一分钟，就会running。</p><p>之后点右边的三个点（server刚起来也可能是叫manage，反正就是最右边的）进入server detail。（如果之后哪天ip真的被封了，也可以在这里点destroy然后重新建一个）</p><p><img src="/images/pasted-44.png" alt="upload successful"></p><p>这里是你的server的一些详细信息，<strong>记住你的ip address和password</strong>，密码需要点那个小眼睛才能看到。（大家可以看见这里月流量是1000G，我这个4个人用了大半个月也就用了100多G，所以5刀的流量足够了）</p><p><img src="/images/pasted-45.png" alt="upload successful"></p><p>到这里vps就做好了，进入下一步购买域名。</p><h1 id="购买域名"><a href="#购买域名" class="headerlink" title="购买域名"></a>购买域名</h1><p>Xray同样与VMess，VLess，Trojan一样，也是走https，所以也需要有一个自己的域名为我们做掩护。</p><p>买域名的地方也很多，国内主要是腾讯云和阿里云，域名不需要在国外供应商买，哪里买都一样（国内买需要实名认证，而且认证需要一些时间。介意的还是直接在godaddy买吧）。腾讯阿里都有新人优惠，第一次购买域名，像.club, .xyz之类的小众域名基本只要1块一年，很便宜了。我用的是腾讯云，这里也以腾讯云为例，其他平台的流程也基本一致。</p><p>首先进入<a href="https://cloud.tencent.com/" target="_blank" rel="noopener">腾讯云主页</a>, 先点右上角的免费注册，注册登陆之后再产品这里选域名注册，热门里就有。</p><p><img src="/images/pasted-46.png" alt="upload successful"></p><p>之后可以直接搜自己想要的域名，也可以直接点下面的1元域名优惠抢，首次注册都可以1块钱购买一年。（这里就不放图了，都是中文，应该很好操作了）</p><p>购买之后点右上角进入控制台，搜索云解析，进入这样一个界面。点击你自己的域名，或者点击右边域名对应的解析。（可以看到这里腾讯要求在国内开展网站需要备案，我们其实也相当于建立了一个网站，但是我的经验因为我们用国外的服务器所以不备案也没关系。）<br><img src="/images/pasted-48.png" alt="upload successful"></p><p>之后直接点击快速添加网站/邮箱解析，选择网站解析。之后输入刚才购买的vps的ip地址就好了，解析大概需要十分钟以内。</p><p><img src="/images/pasted-50.png" alt="upload successful"></p><p>到这里域名购买解析部分就结束了，可以进行下一步。</p><h1 id="脚本安装Xray服务端"><a href="#脚本安装Xray服务端" class="headerlink" title="脚本安装Xray服务端"></a>脚本安装Xray服务端</h1><p>首先下载一个ssh软件，比如putty，打开软件是酱婶儿的。填进去你的ip然后open。</p><p><img src="/images/pasted-51.png" alt="upload successful"><br>然后用root账号登陆（注意login as 后面是填写用户名的，不是密码，先填用户名root回车再写密码，虽然好像很罗嗦，我之前也没想过这里也需要讲，但是真的有许多人卡在这一步），密码就是刚才记下的密码，输进去，敲回车。（注意这里可以直接把密码复制过去，但是一定注意第一不要复制到了空格，第二鼠标在putty里敲右键就是粘贴了，不要再ctrl+v，密码也是不会显示的，输进去直接回车就好）</p><p>如果是Mac用户，直接打开终端，输入如下命令，之后复制粘贴输入root密码登陆：</p><pre><code>ssh root@xxx.xxx.xxx.xxx (xxx替换为ip)</code></pre><p>依次输入下面的命令，安脚本：</p><pre><code>wget -N --no-check-certificate &quot;https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh&quot; &amp;&amp; chmod 700 /root/install.sh &amp;&amp; /root/install.sh</code></pre><p>脚本长这样：</p><p><img src="/images/pasted-117.png" alt="upload successful"></p><p>依次选择 2.任意组合安装–&gt;1.Xray-core–&gt;0.VLESS+TLS/XTLS+TCP</p><p>之后按照提示输入之前解析好的域名，依照提示往下进行就好了。（若中途提示TLS证书申请出现问题,第一步检查server是不是Debian 9，之后检查域名域名，不要用汉字域名，不要用二级域名，要用新域名。）</p><p>安装好之后，浏览器打开自己的域名，可以看到伪装网站，大概长这样：</p><p><img src="/images/pasted-120.png" alt="upload successful"></p><p>要是到这一步，打不开伪装网站的，就不要继续进行了，重建VPS重新跑脚本吧。</p><p>之后安装BBR加速，会让我们科学上网速度快很多，重新再跑一次脚本：</p><pre><code>wget -N --no-check-certificate &quot;https://raw.githubusercontent.com/mack-a/v2ray-agent/master/install.sh&quot; &amp;&amp; chmod 700 /root/install.sh &amp;&amp; /root/install.sh</code></pre><p><img src="/images/pasted-121.png" alt="upload successful"></p><p>选13–&gt;1</p><p>之后会自动安装BBR，安装好之后再选11，开启BBR：</p><p><img src="/images/pasted-122.png" alt="upload successful"></p><p>开启后，输入reboot，重启server使BBR生效：</p><pre><code>reboot</code></pre><p><img src="/images/pasted-123.png" alt="upload successful"></p><p>稍等一会，重新进入VPS，再次运行脚本，选择账户管理，记录下自己的server信息，server端的安装配置就告一段落了：</p><p>再跑一次脚本，输入3，1，复制记录下输出信息:<br><img src="/images/pasted-124.png" alt="upload successful"></p><h1 id="Qv2ray客户端配置使用"><a href="#Qv2ray客户端配置使用" class="headerlink" title="Qv2ray客户端配置使用"></a>Qv2ray客户端配置使用</h1><p>首先根据自己系统不同，下载平台的客户端，注意一定要根据自己的操作系统下载：</p><p><a href="https://github.com/Qv2ray/Qv2ray/releases/download/v2.7.0-pre1/Qv2ray.v2.7.0-pre1.Windows-x64.7z" target="_blank" rel="noopener">Windows客户端下载（64位）</a></p><p><a href="https://github.com/Qv2ray/Qv2ray/releases/download/v2.7.0-pre1/Qv2ray.v2.7.0-pre1.macOS-x64.dmg" target="_blank" rel="noopener">MacOS 客户端下载</a></p><p>Qv2ray与之前使用的v2rayN不同，核心需要单独下载，下载安装好客户端后，我们再根据系统下载核心，下载好是一个zip文件，我们先把他解压了：</p><p><a href="https://github.com/XTLS/Xray-core/releases/download/v1.0.0/Xray-windows-64.zip" target="_blank" rel="noopener">Windows核心下载</a></p><p><a href="https://github.com/XTLS/Xray-core/releases/download/v1.0.0/Xray-macos-64.zip" target="_blank" rel="noopener">MacOS核心下载</a></p><p>注意不要把核心文件夹放在容易被误删的地方，要保存好。</p><p>我们先打开客户端，选择preference –&gt; kernel Settings：</p><p><img src="/images/pasted-125.png" alt="upload successful"></p><p>之后将 v@eay core executable Path选择为我们刚才下好解压出的xray核心文件夹中的xray，将v2ray assests directory改为xray核心文件夹：</p><p><img src="/images/pasted-126.png" alt="upload successful"></p><p>选好后点OK。</p><p>之后如下添加节点，配置客户端。<br><img src="/images/pasted-127.png" alt="upload successful"></p><p>点ok之后，可能需要重启一下客户端，再打开，新的节点就可以使用了。</p><h1 id="移动端"><a href="#移动端" class="headerlink" title="移动端"></a>移动端</h1><h2 id="安卓手机客户端"><a href="#安卓手机客户端" class="headerlink" title="安卓手机客户端"></a>安卓手机客户端</h2><p><a href="https://github.com/2dust/v2rayNG/releases/download/1.5.0/v2rayNG_1.5.0_arm64-v8a.apk" target="_blank" rel="noopener">V2rayNG（支持VLess XTLS）</a></p><h2 id="苹果端"><a href="#苹果端" class="headerlink" title="苹果端"></a>苹果端</h2><p>Shadowrocket 2.1.67及以上</p><p>自行去美区App store下载，或者求助万能淘宝。</p><h1 id="其他教程"><a href="#其他教程" class="headerlink" title="其他教程"></a>其他教程</h1><p>若搭建中遇到困难，实在解决不了了，可以试试其他协议：</p><p><a href="http://luyiminggonnabeok.cn/2020/10/13/Vless-ws-tls%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Vless+ws+tls一键脚本教程</a></p><p><a href="http://luyiminggonnabeok.cn/2020/10/13/Naive-ws-tls%E6%A2%AF%E5%AD%90%E6%90%AD%E5%BB%BA%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%95%99%E7%A8%8B/">Naive+ws+tls科学上网梯子搭建一键脚本教程</a></p><p><a href="http://luyiminggonnabeok.cn/2019/12/07/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E6%90%AD%E5%BB%BATrojan%E6%A2%AF%E5%AD%90%E8%AF%A6%E7%BB%86%E6%95%99%E7%A8%8B/">一键脚本搭建Trojan科学上网梯子详细教程</a></p><p><a href="http://luyiminggonnabeok.cn/2019/10/18/%E4%B8%80%E9%94%AE%E8%84%9A%E6%9C%AC%E9%85%8D%E7%BD%AEV2ray%E6%A2%AF%E5%AD%90%E6%95%99%E7%A8%8B/">一键脚本配置V2ray科学上网梯子详细教程</a>,</p><p><a href="http://luyiminggonnabeok.cn/2018/08/10/%E5%8D%81%E5%88%86%E9%92%9F%E6%90%AD%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84SSR%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91%E6%A2%AF%E5%AD%90/">十分钟搭建自己的科学上网SSR梯子</a>,</p><h1 id="vps其他玩法"><a href="#vps其他玩法" class="headerlink" title="vps其他玩法"></a>vps其他玩法</h1><p><a href="http://luyiminggonnabeok.cn/2019/12/30/%E5%BF%AB%E9%80%9F%E6%90%AD%E5%BB%BAtraccar%E6%89%8B%E6%9C%BAGPS%E8%BF%BD%E8%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8/">VPS快速搭建traccar手机GPS追踪服务器</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;blockquote&gt;
+&lt;p&gt;又是后知后觉，最近才发现Xray，算是2020年底到2021年最新的科学上网协议。水一篇教程，顺便稍微讲解一下全协议全功能客户端Qv2ray的用法，确实比v2rayN好很多。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h1 id=&quot;Xray简介&quot;&gt;&lt;a
+      
+    
+    </summary>
+    
+    
+      <category term="教程" scheme="http://luyiminggonnabeok.cn/categories/%E6%95%99%E7%A8%8B/"/>
+    
+    
+      <category term="梯子" scheme="http://luyiminggonnabeok.cn/tags/%E6%A2%AF%E5%AD%90/"/>
+    
+      <category term="科学上网" scheme="http://luyiminggonnabeok.cn/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/"/>
+    
+      <category term="xray" scheme="http://luyiminggonnabeok.cn/tags/xray/"/>
+    
+  </entry>
   
   <entry>
     <title>Vless+ws+tls梯子搭建一键脚本教程</title>
@@ -617,40 +650,6 @@
       <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
     
       <category term="mysql" scheme="http://luyiminggonnabeok.cn/tags/mysql/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>APACHE几种功能的学习练习笔记</title>
-    <link href="http://luyiminggonnabeok.cn/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/"/>
-    <id>http://luyiminggonnabeok.cn/2018/08/15/APACHE%E5%AD%A6%E4%B9%A0%E7%BB%83%E4%B9%A0%E7%AC%94%E8%AE%B0/</id>
-    <published>2018-08-15T06:09:00.000Z</published>
-    <updated>2020-05-04T11:36:49.000Z</updated>
-    
-    <content type="html"><![CDATA[<blockquote><p>本文主要通过几个有关apache中httpd.conf文件设置的小练习，来熟悉一些基本的apache功能实现。</p></blockquote><hr><h2 id="Test1"><a href="#Test1" class="headerlink" title="Test1"></a>Test1</h2><blockquote><p>Deny the Deny the ip address to request some special page</p></blockquote><p>此功能的实现主要通过加入Order Allow，Deny顺序进行实现。有两种方式。</p><h3 id="方式一"><a href="#方式一" class="headerlink" title="方式一"></a>方式一</h3><p>在httpd.conf中加入一个Directory字段</p><pre><code>&lt;Directory /&gt;    Order Allow,Deny    Allow from all    Deny from xxx.xxx.xxx.xxx #阻止一个ip访问    Deny from xxx.xxx.xxx.xxx/xxx #阻止一个ip段访问&lt;/Directory&gt;</code></pre><p>这个字段表示，对于对本服务器所有的访问请求，先允许，后拒绝，允许的范围是所有，然后再拒绝特定字段ip，当然，我们还可以反着写，来实现只允许特定ip访问的功能，如下</p><pre><code>&lt;Directory /&gt;    Order Deny,Allow    Deny from all    Allow from xxx.xxx.xxx.xxx #允许一个ip访问    Allow from xxx.xxx.xxx.xxx/xxx #允许一个ip段访问&lt;/Directory&gt;</code></pre><p>上面就实现了先拒绝再允许指定ip的操作。</p><h3 id="方式二"><a href="#方式二" class="headerlink" title="方式二"></a>方式二</h3><p>如果服务器开了多个虚拟主机，也可以在VirtualHost字段添加Location字段实现这个功能，如下</p><pre><code>&lt;VirtualHost *:8000&gt;    DocumentRoot /usr/local/httpd/htdocs    DirectoryIndex 002.gif    ServerName localhost:8000    &lt;Location /&gt;        Order Allow,Deny        Allow from all        Deny from all    &lt;/Location&gt;&lt;/VirtualHost&gt;</code></pre><h3 id="禁止通过IP访问功能"><a href="#禁止通过IP访问功能" class="headerlink" title="禁止通过IP访问功能"></a>禁止通过IP访问功能</h3><p>通过以上练习，我们可以用虚拟主机加这个方法，实现禁止用户通过我们的IP访问我们的网站，而只能通过域名访问的功能。如下</p><pre><code>&lt;VirtualHost *:8000&gt;    ServerName localhost:8000    &lt;Location /&gt;        Order Allow,Deny        Allow from all        Deny from all    &lt;/Location&gt;&lt;/VirtualHost&gt;&lt;VirtualHost *:8000&gt;    DocumentRoot /usr/local/httpd/htdocs    DirectoryIndex 002.gif    ServerName www.mengze.wang:8000&lt;/VirtualHost&gt;</code></pre><p>如上，其实实现方法就是我们给一个网站添加了两个虚拟主机，一个servername用IP表示，一个用域名表示。我们先禁止了通过IP的虚拟主机的所有访问，然后不限制通过域名的访问，就达到了这个目的。</p><hr><h2 id="Test-2"><a href="#Test-2" class="headerlink" title="Test 2"></a>Test 2</h2><blockquote><p>User authentication</p></blockquote><p>此功能主要通过apache自带的htpassed工具进行密码创建，然后通过指定目录下的AllowOverride设置来实现。</p><p>首先用htpassed工具创建账户密码，htpassed在bin目录下。</p><pre><code>#cd /usr/local/httpd/bin#./htpassed -bc /usr/local/httpd/mima/.mima1 ben lym1993512</code></pre><p>-b代表密码明文写在后米，不加b的话，命令后面不能直接接密码，输入命令之后会要求输入两遍密码。<br>-c代表新建密码文件，第一次建立需要，之后向其中添加账户就不需要。</p><p>然后编辑httpd.conf文件</p><pre><code>#vim $conf (为了方便我设置了环境变量conf=&quot;usr/local/httpd/conf/httpd.conf&quot;)&lt;Directory &quot;/usr/local/httpd/htdocs&quot;&gt;    Options Indexes FollowSymLinks    AllowOverride Authconfig    AuthType Basic    AuthName &quot;Enter your passwd&quot;    AuthUserFile /usr/local/httpd/mima/.mima1    Require user ben&lt;/Directory&gt;</code></pre><p>之后重启httpd服务就好用了，会提示输入用户名密码。</p><hr><h2 id="Test-3"><a href="#Test-3" class="headerlink" title="Test 3"></a>Test 3</h2><blockquote><p>Maps web paths into filesystem paths and is used to</p></blockquote><p>此功能主要通过aliasmod实现，在httpd.conf文件中打开相关mod，然后在需要指定别名的目录字段之前加上Alias字段即可。举例如下</p><pre><code>LoadModule alias_module modules/mod_alias.soAlias /readme &quot;/usr/local/httpd/htdocs/add&quot;&lt;Directory &quot;/usr/local/httpd/htdocs/add&quot;&gt;    Options Indexes MultiViews FollowSymLinks    AllowOverride None&lt;/Directory&gt;</code></pre><p>这样就可以在浏览器里直接通过hostname/readme访问服务器中/usr/local/httpd/htdocs/add目录下的内容。</p><hr><h2 id="proxy代理功能的实现"><a href="#proxy代理功能的实现" class="headerlink" title="proxy代理功能的实现"></a>proxy代理功能的实现</h2><blockquote><p>用多个域名直接访问服务器的多个端口</p></blockquote><p>这就是之前我自己琢磨做的一个小功能，有这个需求是因为我租了一个服务器和一个域名，域名解析到服务器IP，之后在上面搭建了一个博客。搭建博客我用的是一个叫hexo的专门用来做博客的软件，不是用httpd，博客搭建好后，用hexo监听80端口开启服务，在浏览器输入我租用的域名，就可以访问博客了。</p><p>之后我又租了两个域名，但是不知道做什么用，就想都解析到之前租用的服务器IP上，用httpd服务做两个小网站。</p><p>但是问题来了，在浏览器里输入域名，访问网站，默认都是访问80端口，但是我服务器的80端口已经被hexo软件占用，来访问博客了，其他的域名解析到我的服务器IP后，直接输入域名也只会访问到我的博客，不能到新的网站。</p><p>当然我可以在httpd里多开两个端口监听，比如5000，8000端口，然后新建两个VirtualHost对应到5000，8000端口，servername填我之后申请的两个域名，但是这样做的话，我每次在浏览器输入域名之后都要加上“:端口号”，这样很不方便。</p><p>或者就是关了hexo软件，把博客迁移到httpd里来，开三个VirtualHost，都对应到80端口，Servername填三个域名，对应不同的根目录，但是hexo还是很方便的，我不想关软件。</p><p>总之，我想要实现的是，在hexo软件不关闭的情况下，httpd服务也开启，三个域名分别能直接访问我的博客和其他两个网站。</p><p>实现的方法就是用Proxy代理功能。首先在httpd.conf里开启几个mod</p><pre><code>LoadModule proxy_module modules/mod_proxy.soLoadModule proxy_connect_module modules/mod_proxy_connect.soLoadModule proxy_http_module modules/mod_proxy_http.so</code></pre><p>然后监听三个端口</p><pre><code>Listen 80    #用来代理Listen 5000  #网站1端口Listen 8000  #网站2端口</code></pre><p>hexo服务我开了4000端口，作为博客访问的端口</p><pre><code>hexo s -p 4000</code></pre><p>然后新开两个VirtualHost作为新网站</p><pre><code>&lt;VirtualHost *:5000&gt;    DocumentRoot /usr/local/httpd/htdocs    DirectoryIndex 001.jpg    ServerName localhost:5000 #写localhost或者域名都可以，因为都解析到IP，下同&lt;/VirtualHost&gt;&lt;VirtualHost *:8000&gt;    DocumentRoot /usr/local/httpd/htdocs    DirectoryIndex 002.gif    ServerName www.mengze.wang:8000&lt;/VirtualHost&gt;</code></pre><p>然后加对应的代理VirtualHost</p><pre><code>&lt;VirtualHost *:80&gt;    ServerName  www.luyiminggonnabeok.cn #博客    ServerAlias www.luyiminggonnabeok.cn    ProxyPreserveHost On    ProxyRequests Off    ProxyPass / http://123.207.249.242:4000/    ProxyPassReverse / http://123.207.249.242:4000/&lt;/VirtualHost&gt;&lt;VirtualHost *:80&gt;    ServerName  www.zoeswan.wang #网站1    ServerAlias www.zoeswan.wang    ProxyPreserveHost On    ProxyRequests Off    ProxyPass / http://123.207.249.242:5000/    ProxyPassReverse / https://123.207.249.242:5000/&lt;/VirtualHost&gt;&lt;VirtualHost *:80&gt;    ServerName  www.mengze.wang #网站2    ServerAlias www.mengze.wang    ProxyPreserveHost On    ProxyRequests Off    ProxyPass / http://www.mengze.wang:8000/    ProxyPassReverse / http://mengze.wang:8000/&lt;/VirtualHost&gt;</code></pre><p>这样通过代理，就可以把同是80端口的请求转发到对应的不同端口上，实现了需求。</p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;blockquote&gt;
-&lt;p&gt;本文主要通过几个有关apache中httpd.conf文件设置的小练习，来熟悉一些基本的apache功能实现。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&quot;Test1&quot;&gt;&lt;a href=&quot;#Test1&quot; class=&quot;header
-      
-    
-    </summary>
-    
-    
-      <category term="学习" scheme="http://luyiminggonnabeok.cn/categories/%E5%AD%A6%E4%B9%A0/"/>
-    
-    
-      <category term="avaya" scheme="http://luyiminggonnabeok.cn/tags/avaya/"/>
-    
-      <category term="Linux" scheme="http://luyiminggonnabeok.cn/tags/Linux/"/>
-    
-      <category term="httpd" scheme="http://luyiminggonnabeok.cn/tags/httpd/"/>
     
   </entry>
   
